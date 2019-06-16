@@ -1,0 +1,706 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		190EE4F922B5FFE800E2A47E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 190EE4F822B5FFE800E2A47E /* AppDelegate.swift */; };
+		190EE4FB22B5FFE800E2A47E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 190EE4FA22B5FFE800E2A47E /* SceneDelegate.swift */; };
+		190EE4FD22B5FFE800E2A47E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 190EE4FC22B5FFE800E2A47E /* ViewController.swift */; };
+		190EE50022B5FFE800E2A47E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 190EE4FE22B5FFE800E2A47E /* Main.storyboard */; };
+		190EE50222B5FFEA00E2A47E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 190EE50122B5FFEA00E2A47E /* Assets.xcassets */; };
+		190EE50522B5FFEA00E2A47E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 190EE50322B5FFEA00E2A47E /* LaunchScreen.storyboard */; };
+		190EE51022B5FFEA00E2A47E /* FEPhotosTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 190EE50F22B5FFEA00E2A47E /* FEPhotosTests.swift */; };
+		190EE51B22B5FFEA00E2A47E /* FEPhotosUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 190EE51A22B5FFEA00E2A47E /* FEPhotosUITests.swift */; };
+		190EE52A22B6003400E2A47E /* FEBaseTabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 190EE52922B6003400E2A47E /* FEBaseTabBarViewController.swift */; };
+		190EE52C22B6005100E2A47E /* FEBaseNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 190EE52B22B6005100E2A47E /* FEBaseNavigationController.swift */; };
+		190EE53022B6008200E2A47E /* FEPhotoCollectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 190EE52E22B6008200E2A47E /* FEPhotoCollectionController.swift */; };
+		190EE53122B6008200E2A47E /* FEPhotoCollectionController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 190EE52F22B6008200E2A47E /* FEPhotoCollectionController.xib */; };
+		190EE53422B600AE00E2A47E /* FEPhotoSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 190EE53222B600AE00E2A47E /* FEPhotoSectionHeaderView.swift */; };
+		190EE53522B600AE00E2A47E /* FEPhotoSectionHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 190EE53322B600AE00E2A47E /* FEPhotoSectionHeaderView.xib */; };
+		190EE53822B6121E00E2A47E /* FEPhotoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 190EE53622B6121E00E2A47E /* FEPhotoCell.swift */; };
+		190EE53922B6121E00E2A47E /* FEPhotoCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 190EE53722B6121E00E2A47E /* FEPhotoCell.xib */; };
+		2F8F69241A480B2C35901196 /* Pods_FEPhotos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8609AEE3EFFF08606E3123F8 /* Pods_FEPhotos.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		190EE50C22B5FFEA00E2A47E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 190EE4ED22B5FFE800E2A47E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 190EE4F422B5FFE800E2A47E;
+			remoteInfo = FEPhotos;
+		};
+		190EE51722B5FFEA00E2A47E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 190EE4ED22B5FFE800E2A47E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 190EE4F422B5FFE800E2A47E;
+			remoteInfo = FEPhotos;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		190EE4F522B5FFE800E2A47E /* FEPhotos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FEPhotos.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		190EE4F822B5FFE800E2A47E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		190EE4FA22B5FFE800E2A47E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		190EE4FC22B5FFE800E2A47E /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		190EE4FF22B5FFE800E2A47E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		190EE50122B5FFEA00E2A47E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		190EE50422B5FFEA00E2A47E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		190EE50622B5FFEA00E2A47E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		190EE50B22B5FFEA00E2A47E /* FEPhotosTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FEPhotosTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		190EE50F22B5FFEA00E2A47E /* FEPhotosTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FEPhotosTests.swift; sourceTree = "<group>"; };
+		190EE51122B5FFEA00E2A47E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		190EE51622B5FFEA00E2A47E /* FEPhotosUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FEPhotosUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		190EE51A22B5FFEA00E2A47E /* FEPhotosUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FEPhotosUITests.swift; sourceTree = "<group>"; };
+		190EE51C22B5FFEA00E2A47E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		190EE52922B6003400E2A47E /* FEBaseTabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FEBaseTabBarViewController.swift; sourceTree = "<group>"; };
+		190EE52B22B6005100E2A47E /* FEBaseNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FEBaseNavigationController.swift; sourceTree = "<group>"; };
+		190EE52E22B6008200E2A47E /* FEPhotoCollectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FEPhotoCollectionController.swift; sourceTree = "<group>"; };
+		190EE52F22B6008200E2A47E /* FEPhotoCollectionController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FEPhotoCollectionController.xib; sourceTree = "<group>"; };
+		190EE53222B600AE00E2A47E /* FEPhotoSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FEPhotoSectionHeaderView.swift; sourceTree = "<group>"; };
+		190EE53322B600AE00E2A47E /* FEPhotoSectionHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FEPhotoSectionHeaderView.xib; sourceTree = "<group>"; };
+		190EE53622B6121E00E2A47E /* FEPhotoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FEPhotoCell.swift; sourceTree = "<group>"; };
+		190EE53722B6121E00E2A47E /* FEPhotoCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FEPhotoCell.xib; sourceTree = "<group>"; };
+		32B352F98768CA28A6217B90 /* Pods-FEPhotos.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FEPhotos.debug.xcconfig"; path = "Target Support Files/Pods-FEPhotos/Pods-FEPhotos.debug.xcconfig"; sourceTree = "<group>"; };
+		8609AEE3EFFF08606E3123F8 /* Pods_FEPhotos.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FEPhotos.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		928A48C0D9758CCE5ABE5404 /* Pods-FEPhotos.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FEPhotos.release.xcconfig"; path = "Target Support Files/Pods-FEPhotos/Pods-FEPhotos.release.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		190EE4F222B5FFE800E2A47E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2F8F69241A480B2C35901196 /* Pods_FEPhotos.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		190EE50822B5FFEA00E2A47E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		190EE51322B5FFEA00E2A47E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		190EE4EC22B5FFE800E2A47E = {
+			isa = PBXGroup;
+			children = (
+				190EE4F722B5FFE800E2A47E /* FEPhotos */,
+				190EE50E22B5FFEA00E2A47E /* FEPhotosTests */,
+				190EE51922B5FFEA00E2A47E /* FEPhotosUITests */,
+				190EE4F622B5FFE800E2A47E /* Products */,
+				829B0E8E7853672BEDBCFBFC /* Pods */,
+				B023FEB53C19FAEBDB2261CC /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		190EE4F622B5FFE800E2A47E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				190EE4F522B5FFE800E2A47E /* FEPhotos.app */,
+				190EE50B22B5FFEA00E2A47E /* FEPhotosTests.xctest */,
+				190EE51622B5FFEA00E2A47E /* FEPhotosUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		190EE4F722B5FFE800E2A47E /* FEPhotos */ = {
+			isa = PBXGroup;
+			children = (
+				190EE52D22B6006900E2A47E /* Photo */,
+				190EE52822B6000800E2A47E /* Base */,
+				190EE4F822B5FFE800E2A47E /* AppDelegate.swift */,
+				190EE4FA22B5FFE800E2A47E /* SceneDelegate.swift */,
+				190EE4FC22B5FFE800E2A47E /* ViewController.swift */,
+				190EE4FE22B5FFE800E2A47E /* Main.storyboard */,
+				190EE50122B5FFEA00E2A47E /* Assets.xcassets */,
+				190EE50322B5FFEA00E2A47E /* LaunchScreen.storyboard */,
+				190EE50622B5FFEA00E2A47E /* Info.plist */,
+			);
+			path = FEPhotos;
+			sourceTree = "<group>";
+		};
+		190EE50E22B5FFEA00E2A47E /* FEPhotosTests */ = {
+			isa = PBXGroup;
+			children = (
+				190EE50F22B5FFEA00E2A47E /* FEPhotosTests.swift */,
+				190EE51122B5FFEA00E2A47E /* Info.plist */,
+			);
+			path = FEPhotosTests;
+			sourceTree = "<group>";
+		};
+		190EE51922B5FFEA00E2A47E /* FEPhotosUITests */ = {
+			isa = PBXGroup;
+			children = (
+				190EE51A22B5FFEA00E2A47E /* FEPhotosUITests.swift */,
+				190EE51C22B5FFEA00E2A47E /* Info.plist */,
+			);
+			path = FEPhotosUITests;
+			sourceTree = "<group>";
+		};
+		190EE52822B6000800E2A47E /* Base */ = {
+			isa = PBXGroup;
+			children = (
+				190EE52922B6003400E2A47E /* FEBaseTabBarViewController.swift */,
+				190EE52B22B6005100E2A47E /* FEBaseNavigationController.swift */,
+			);
+			path = Base;
+			sourceTree = "<group>";
+		};
+		190EE52D22B6006900E2A47E /* Photo */ = {
+			isa = PBXGroup;
+			children = (
+				190EE52E22B6008200E2A47E /* FEPhotoCollectionController.swift */,
+				190EE52F22B6008200E2A47E /* FEPhotoCollectionController.xib */,
+				190EE53222B600AE00E2A47E /* FEPhotoSectionHeaderView.swift */,
+				190EE53322B600AE00E2A47E /* FEPhotoSectionHeaderView.xib */,
+				190EE53622B6121E00E2A47E /* FEPhotoCell.swift */,
+				190EE53722B6121E00E2A47E /* FEPhotoCell.xib */,
+			);
+			path = Photo;
+			sourceTree = "<group>";
+		};
+		829B0E8E7853672BEDBCFBFC /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				32B352F98768CA28A6217B90 /* Pods-FEPhotos.debug.xcconfig */,
+				928A48C0D9758CCE5ABE5404 /* Pods-FEPhotos.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		B023FEB53C19FAEBDB2261CC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				8609AEE3EFFF08606E3123F8 /* Pods_FEPhotos.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		190EE4F422B5FFE800E2A47E /* FEPhotos */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 190EE51F22B5FFEA00E2A47E /* Build configuration list for PBXNativeTarget "FEPhotos" */;
+			buildPhases = (
+				1AC0C7B79B47C9F154DBE212 /* [CP] Check Pods Manifest.lock */,
+				190EE4F122B5FFE800E2A47E /* Sources */,
+				190EE4F222B5FFE800E2A47E /* Frameworks */,
+				190EE4F322B5FFE800E2A47E /* Resources */,
+				C73132E2F74129379E57E8A5 /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FEPhotos;
+			productName = FEPhotos;
+			productReference = 190EE4F522B5FFE800E2A47E /* FEPhotos.app */;
+			productType = "com.apple.product-type.application";
+		};
+		190EE50A22B5FFEA00E2A47E /* FEPhotosTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 190EE52222B5FFEA00E2A47E /* Build configuration list for PBXNativeTarget "FEPhotosTests" */;
+			buildPhases = (
+				190EE50722B5FFEA00E2A47E /* Sources */,
+				190EE50822B5FFEA00E2A47E /* Frameworks */,
+				190EE50922B5FFEA00E2A47E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				190EE50D22B5FFEA00E2A47E /* PBXTargetDependency */,
+			);
+			name = FEPhotosTests;
+			productName = FEPhotosTests;
+			productReference = 190EE50B22B5FFEA00E2A47E /* FEPhotosTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		190EE51522B5FFEA00E2A47E /* FEPhotosUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 190EE52522B5FFEA00E2A47E /* Build configuration list for PBXNativeTarget "FEPhotosUITests" */;
+			buildPhases = (
+				190EE51222B5FFEA00E2A47E /* Sources */,
+				190EE51322B5FFEA00E2A47E /* Frameworks */,
+				190EE51422B5FFEA00E2A47E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				190EE51822B5FFEA00E2A47E /* PBXTargetDependency */,
+			);
+			name = FEPhotosUITests;
+			productName = FEPhotosUITests;
+			productReference = 190EE51622B5FFEA00E2A47E /* FEPhotosUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		190EE4ED22B5FFE800E2A47E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1100;
+				LastUpgradeCheck = 1100;
+				ORGANIZATIONNAME = "罗祖根";
+				TargetAttributes = {
+					190EE4F422B5FFE800E2A47E = {
+						CreatedOnToolsVersion = 11.0;
+					};
+					190EE50A22B5FFEA00E2A47E = {
+						CreatedOnToolsVersion = 11.0;
+						TestTargetID = 190EE4F422B5FFE800E2A47E;
+					};
+					190EE51522B5FFEA00E2A47E = {
+						CreatedOnToolsVersion = 11.0;
+						TestTargetID = 190EE4F422B5FFE800E2A47E;
+					};
+				};
+			};
+			buildConfigurationList = 190EE4F022B5FFE800E2A47E /* Build configuration list for PBXProject "FEPhotos" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 190EE4EC22B5FFE800E2A47E;
+			productRefGroup = 190EE4F622B5FFE800E2A47E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				190EE4F422B5FFE800E2A47E /* FEPhotos */,
+				190EE50A22B5FFEA00E2A47E /* FEPhotosTests */,
+				190EE51522B5FFEA00E2A47E /* FEPhotosUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		190EE4F322B5FFE800E2A47E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				190EE50522B5FFEA00E2A47E /* LaunchScreen.storyboard in Resources */,
+				190EE53122B6008200E2A47E /* FEPhotoCollectionController.xib in Resources */,
+				190EE53522B600AE00E2A47E /* FEPhotoSectionHeaderView.xib in Resources */,
+				190EE50222B5FFEA00E2A47E /* Assets.xcassets in Resources */,
+				190EE50022B5FFE800E2A47E /* Main.storyboard in Resources */,
+				190EE53922B6121E00E2A47E /* FEPhotoCell.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		190EE50922B5FFEA00E2A47E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		190EE51422B5FFEA00E2A47E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		1AC0C7B79B47C9F154DBE212 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-FEPhotos-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C73132E2F74129379E57E8A5 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-FEPhotos/Pods-FEPhotos-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-FEPhotos/Pods-FEPhotos-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-FEPhotos/Pods-FEPhotos-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		190EE4F122B5FFE800E2A47E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				190EE52A22B6003400E2A47E /* FEBaseTabBarViewController.swift in Sources */,
+				190EE53822B6121E00E2A47E /* FEPhotoCell.swift in Sources */,
+				190EE4FD22B5FFE800E2A47E /* ViewController.swift in Sources */,
+				190EE4F922B5FFE800E2A47E /* AppDelegate.swift in Sources */,
+				190EE53022B6008200E2A47E /* FEPhotoCollectionController.swift in Sources */,
+				190EE4FB22B5FFE800E2A47E /* SceneDelegate.swift in Sources */,
+				190EE52C22B6005100E2A47E /* FEBaseNavigationController.swift in Sources */,
+				190EE53422B600AE00E2A47E /* FEPhotoSectionHeaderView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		190EE50722B5FFEA00E2A47E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				190EE51022B5FFEA00E2A47E /* FEPhotosTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		190EE51222B5FFEA00E2A47E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				190EE51B22B5FFEA00E2A47E /* FEPhotosUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		190EE50D22B5FFEA00E2A47E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 190EE4F422B5FFE800E2A47E /* FEPhotos */;
+			targetProxy = 190EE50C22B5FFEA00E2A47E /* PBXContainerItemProxy */;
+		};
+		190EE51822B5FFEA00E2A47E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 190EE4F422B5FFE800E2A47E /* FEPhotos */;
+			targetProxy = 190EE51722B5FFEA00E2A47E /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		190EE4FE22B5FFE800E2A47E /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				190EE4FF22B5FFE800E2A47E /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		190EE50322B5FFEA00E2A47E /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				190EE50422B5FFEA00E2A47E /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		190EE51D22B5FFEA00E2A47E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		190EE51E22B5FFEA00E2A47E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		190EE52022B5FFEA00E2A47E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 32B352F98768CA28A6217B90 /* Pods-FEPhotos.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = FEPhotos/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = test.FEPhotos;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		190EE52122B5FFEA00E2A47E /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 928A48C0D9758CCE5ABE5404 /* Pods-FEPhotos.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = FEPhotos/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = test.FEPhotos;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		190EE52322B5FFEA00E2A47E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = FEPhotosTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = test.FEPhotosTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FEPhotos.app/FEPhotos";
+			};
+			name = Debug;
+		};
+		190EE52422B5FFEA00E2A47E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = FEPhotosTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = test.FEPhotosTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FEPhotos.app/FEPhotos";
+			};
+			name = Release;
+		};
+		190EE52622B5FFEA00E2A47E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = FEPhotosUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = test.FEPhotosUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = FEPhotos;
+			};
+			name = Debug;
+		};
+		190EE52722B5FFEA00E2A47E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = FEPhotosUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = test.FEPhotosUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = FEPhotos;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		190EE4F022B5FFE800E2A47E /* Build configuration list for PBXProject "FEPhotos" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				190EE51D22B5FFEA00E2A47E /* Debug */,
+				190EE51E22B5FFEA00E2A47E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		190EE51F22B5FFEA00E2A47E /* Build configuration list for PBXNativeTarget "FEPhotos" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				190EE52022B5FFEA00E2A47E /* Debug */,
+				190EE52122B5FFEA00E2A47E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		190EE52222B5FFEA00E2A47E /* Build configuration list for PBXNativeTarget "FEPhotosTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				190EE52322B5FFEA00E2A47E /* Debug */,
+				190EE52422B5FFEA00E2A47E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		190EE52522B5FFEA00E2A47E /* Build configuration list for PBXNativeTarget "FEPhotosUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				190EE52622B5FFEA00E2A47E /* Debug */,
+				190EE52722B5FFEA00E2A47E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 190EE4ED22B5FFE800E2A47E /* Project object */;
+}
