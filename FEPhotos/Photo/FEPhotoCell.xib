@@ -19,17 +19,28 @@
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="eCw-2L-bsx">
                         <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                     </imageView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2bv-Sg-ogi">
+                        <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
                 </subviews>
             </view>
             <constraints>
                 <constraint firstItem="eCw-2L-bsx" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" id="2lk-s3-RYw"/>
+                <constraint firstAttribute="bottom" secondItem="2bv-Sg-ogi" secondAttribute="bottom" id="BpR-ln-oc4"/>
+                <constraint firstAttribute="trailing" secondItem="2bv-Sg-ogi" secondAttribute="trailing" id="F2N-5U-ueH"/>
+                <constraint firstItem="2bv-Sg-ogi" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="Sk1-O9-ga2"/>
                 <constraint firstAttribute="trailing" secondItem="eCw-2L-bsx" secondAttribute="trailing" id="c2D-59-O5J"/>
                 <constraint firstItem="eCw-2L-bsx" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="eUe-3V-7Vk"/>
                 <constraint firstAttribute="bottom" secondItem="eCw-2L-bsx" secondAttribute="bottom" id="t49-h3-wMS"/>
+                <constraint firstItem="2bv-Sg-ogi" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" id="uyJ-qe-f7F"/>
             </constraints>
             <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>
             <connections>
                 <outlet property="imageView" destination="eCw-2L-bsx" id="Qy2-Bc-tsq"/>
+                <outlet property="titleLabel" destination="2bv-Sg-ogi" id="GWV-ec-NJM"/>
             </connections>
             <point key="canvasLocation" x="132" y="91"/>
         </collectionViewCell>

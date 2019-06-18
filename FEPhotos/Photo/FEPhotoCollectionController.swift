@@ -26,9 +26,11 @@ enum FEPhotoControllerType {
 class FEPhotoCollectionController: UICollectionViewController,UICollectionViewDelegateFlowLayout {
     //照片显示的类型,每行多少张照片
     var controllerType : FEPhotoControllerType!
-//    var offsetScale : CGFloat = 0.0
-//    var offsetHeight : CGFloat = 0.0
+
+    var contentFrame : CGRect = CGRect.zero
+    // 点击cell中心相对于contentFrame的位置
     var touchCellCenter : CGPoint = CGPoint.zero
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.collectionView.backgroundColor = UIColor.white
@@ -43,32 +45,41 @@ class FEPhotoCollectionController: UICollectionViewController,UICollectionViewDe
         layout.sectionFootersPinToVisibleBounds = true
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
-//self.collectionView.isPagingEnabled = true
         self.collectionView.alwaysBounceVertical = true
         // Register cell classes
         self.collectionView!.register(UINib.init(nibName: "FEPhotoCell", bundle: nil), forCellWithReuseIdentifier: "FEPhotoCell")
 
         self.collectionView.register(UINib.init(nibName: "FEPhotoSectionHeaderView", bundle: nil), forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "FEPhotoSectionHeaderView")
-       
+        //        self.contentFrame = CGRect.init(x: 0,
+        //                                        y: 0,
+        //                                        width: self.collectionView.frame.width,
+        //                                        height: self.collectionView.frame.height - FECommon.NavBarHeight - FECommon.TabBarHeight)
+        self.contentFrame = self.collectionView.frame
+        
         self.collectionView.layoutIfNeeded()
-        self.collectionView.setContentOffset(CGPoint.init(x: 0, y: 725.0), animated: false)
-//        let height = self.collectionView.frame.height - 88 - 83
-//        let scale = touchCellCenter.y / height
-//
-//        let offset = (self.collectionView.contentSize.height - 88 - 83) * scale
-//        var contentoffsety = offset - touchCellCenter.y - 88
-//
-//        if (contentoffsety <= 0) {
-//            contentoffsety = 0
-//        }
-//
-//        self.collectionView.setContentOffset(CGPoint.init(x: 0, y: contentoffsety), animated: false)
-             // Do any additional setup after loading the view.
+        self.collectionView.reloadData(){
+            if (self.controllerType != .root) {
+                // 测试代码,找到选择的cell
+                let cellLayoutAttributes = self.collectionView.layoutAttributesForItem(at: IndexPath.init(row: 0, section: 3))
+                let center = CGPoint.init(x: cellLayoutAttributes!.frame.midX, y: cellLayoutAttributes!.frame.midY)
+                //center.y - self.collectionView.frame.height 将cell放到屏幕的最下方,刚好看见
+                //+ (self.contentFrame.size.height - touchCellCenter.y) : 将最下方的cell放到点击的位置
+                var offsety = center.y - self.collectionView.frame.height
+                    + self.contentFrame.size.height - self.touchCellCenter.y
+                if (offsety <= 0) {
+                    offsety = 0
+                } else if (offsety - self.contentFrame.size.height >= self.collectionView.contentSize.height) {
+                    offsety = self.collectionView.contentSize.height - self.contentFrame.size.height
+                }
+                self.collectionView.setContentOffset(CGPoint.init(x: 0, y: offsety ), animated: false)
+            }
+        }
     }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-
+    override func scrollViewDidChangeAdjustedContentInset(_ scrollView: UIScrollView) {
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
     }
     /*
     // MARK: - Navigation
@@ -79,24 +90,37 @@ class FEPhotoCollectionController: UICollectionViewController,UICollectionViewDe
         // Pass the selected object to the new view controller.
     }
     */
-
     // MARK: UICollectionViewDataSource
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 1
+        return 5
     }
-
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of items
-        return 480
+        return self.controllerType.itemCount() * 14
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FEPhotoCell", for: indexPath) as! FEPhotoCell
         cell.backgroundColor = Color.random
         // Configure the cell
+        if (self.controllerType == .root) {
+            if (indexPath.row == 0 && indexPath.section == 0) {
+                cell.titleLabel.text = "1"
+            } else {
+                cell.titleLabel.text = ""
+            }
+        }
+        else {
+            if (indexPath.row == 0 && indexPath.section == 3) {
+                cell.titleLabel.text = "1"
+            }
+            else {
+                cell.titleLabel.text = ""
+            }
+        }
         return cell
     }
     
@@ -116,19 +140,14 @@ class FEPhotoCollectionController: UICollectionViewController,UICollectionViewDe
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         let cell = collectionView.cellForItem(at: indexPath)
-        //相对于collectionView的位置
-        let rect = cell?.convert(cell!.bounds, to: collectionView)
+        //相对于window的位置
+        let rect = cell?.convert(cell!.bounds, to: UIApplication.shared.keyWindow)
         let center = CGPoint.init(x: rect!.midX, y: rect!.midY)
         
-//        let offsetScale = cell!.frame.midY / collectionView.contentSize.height
-
         let con = FEPhotoCollectionController.init(nibName: "FEPhotoCollectionController", bundle: nil)
         con.touchCellCenter = center
-//        con.offsetHeight = center.y
-//        con.offsetScale = offsetScale
-        con.controllerType = .step
+        con.controllerType = self.controllerType == .root ? .step : .detail
         self.navigationController?.pushViewController(con, animated: true)
-        
     }
     
 //    open func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize
