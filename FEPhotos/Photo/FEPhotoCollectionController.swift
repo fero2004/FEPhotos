@@ -25,11 +25,21 @@ enum FEPhotoControllerType {
 
 class FEPhotoCollectionController: UICollectionViewController,UICollectionViewDelegateFlowLayout {
     //照片显示的类型,每行多少张照片
-    var controllerType : FEPhotoControllerType!
+    var controllerType : FEPhotoControllerType! = .root
 
     var contentFrame : CGRect = CGRect.zero
     // 点击cell中心相对于contentFrame的位置
     var touchCellCenter : CGPoint = CGPoint.zero
+    //原始数据
+    var photos : [FEPhotoCellData]? {
+        didSet{
+            if let array = photos {
+                self.buidDatas(photoArray: array)
+            }
+        }
+    }
+    //显示数据
+    var datas = [FEPhotoSectionData]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -75,6 +85,123 @@ class FEPhotoCollectionController: UICollectionViewController,UICollectionViewDe
             }
         }
     }
+    
+    func checkItemIsEqual(a: FEPhotoCellData!, b: FEPhotoCellData!) -> Bool {
+        switch self.controllerType {
+        case .root:
+            if (a.year == b.year) {
+                return true
+            }
+            break
+        case .step:
+            if (a.month == b.month) {
+                return true
+            }
+            break
+        case .detail:
+            if (a.day == b.day) {
+                return true
+            }
+            break;
+        default:
+            break
+        }
+        return false
+    }
+    
+    func buidDatas (photoArray : [FEPhotoCellData]!) {
+        if (photoArray.count > 0) {
+            var sectionData = FEPhotoSectionData()
+            sectionData.photos.append(photoArray[0])
+            self.datas.append(sectionData)
+            for i in 1..<photoArray.count {
+                let item = photoArray[i]
+                if let lastItem = sectionData.photos.last {
+                    if (self.checkItemIsEqual(a: item, b: lastItem)) {
+                        sectionData.photos.append(item)
+                    } else {
+                        sectionData = FEPhotoSectionData()
+                        sectionData.photos.append(item)
+                        self.datas.append(sectionData)
+                    }
+                } else {
+                    sectionData.photos.append(item)
+                }
+            }
+        }
+        switch self.controllerType {
+        case .root:
+            self.buildRootDatasTitle()
+            break
+        case .step:
+            self.buidStepDatasTitle()
+            break
+        case .detail:
+            self.buidDetailDatasTitle()
+            break;
+        default:
+            break
+        }
+    }
+    
+    func buildRootDatasTitle () {
+        for sectionData in self.datas {
+            if (sectionData.photos.count > 0) {
+                sectionData.title = String(sectionData.photos[0].year!)
+                var subtitles = [String]()
+                for photo in sectionData.photos {
+                    if (photo.address!.count > 0 && !subtitles.contains(photo.address!)) {
+                        subtitles.append(photo.address!)
+                    }
+                }
+                if (subtitles.count > 0) {
+                    sectionData.subTitle = subtitles.joined(separator: ",")
+                }
+            }
+        }
+    }
+    
+    func buidStepDatasTitle () {
+        for sectionData in self.datas {
+            var titles = [String]()
+            for photo in sectionData.photos {
+                if (photo.address!.count > 0 && !titles.contains(photo.address!)) {
+                    titles.append(photo.address!)
+                }
+            }
+            var subtitle = ""
+            if (sectionData.photos.count >= 2) {
+                if let first = sectionData.photos.first , let last = sectionData.photos.last {
+                    subtitle.append(String(first.year!) + "年" + String(first.month!) + "月" + String(first.day!) + "日")
+                    subtitle.append("至" + String(last.day!) + "日")
+                }
+            }
+            else if (sectionData.photos.count == 1) {
+                if let first = sectionData.photos.first {
+                    subtitle.append(String(first.year!) + "年" + String(first.month!) + "月" + String(first.day!) + "日")
+                }
+            }
+            if (titles.count > 0) {
+                sectionData.title = titles.joined(separator: " - ")
+                if (subtitle.count > 0) {
+                    sectionData.subTitle = subtitle
+                }
+            } else {
+                if (subtitle.count > 0) {
+                    sectionData.title = subtitle
+                }
+            }
+        }
+    }
+    
+    func buidDetailDatasTitle () {
+        for sectionData in self.datas {
+            if let first = sectionData.photos.first {
+                sectionData.title = (String(first.year!) + "年" + String(first.month!) + "月" + String(first.day!) + "日")
+            }
+        }
+    }
+    
     override func scrollViewDidChangeAdjustedContentInset(_ scrollView: UIScrollView) {
     }
     
@@ -94,33 +221,19 @@ class FEPhotoCollectionController: UICollectionViewController,UICollectionViewDe
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 5
+        return self.datas.count
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of items
-        return self.controllerType.itemCount() * 14
+        let sectionData = self.datas[section]
+        return sectionData.photos.count
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FEPhotoCell", for: indexPath) as! FEPhotoCell
-        cell.backgroundColor = Color.random
-        // Configure the cell
-        if (self.controllerType == .root) {
-            if (indexPath.row == 0 && indexPath.section == 0) {
-                cell.titleLabel.text = "1"
-            } else {
-                cell.titleLabel.text = ""
-            }
-        }
-        else {
-            if (indexPath.row == 0 && indexPath.section == 3) {
-                cell.titleLabel.text = "1"
-            }
-            else {
-                cell.titleLabel.text = ""
-            }
-        }
+        let sectionData = self.datas[indexPath.section]
+        let photoData = sectionData.photos[indexPath.row]
+        cell.imageView.image = photoData.smallImage
         return cell
     }
     

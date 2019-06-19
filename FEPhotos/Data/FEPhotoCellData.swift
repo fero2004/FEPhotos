@@ -17,14 +17,35 @@ class FEPhotoCellData: NSObject {
     let id = UUID().uuidString
     //类型
     var type : FEPhotoCellDataType = .image
+    
+    var smallImagePath : String?
+    var middleImagePath : String?
+    var bigImagePath : String?
+    var orginImagePath : String?
     //小图
-    var smallImage : UIImage?
+    var smallImage : UIImage?{
+        get{
+            return UIImage.init(named: self.smallImagePath!)
+        }
+    }
     //中图
-    var middleImage : UIImage?
+    var middleImage : UIImage?{
+        get{
+            return UIImage.init(named: self.middleImagePath!)
+        }
+    }
     //大图
-    var bigImage : UIImage?
+    var bigImage : UIImage?{
+        get{
+            return UIImage.init(named: self.bigImagePath!)
+        }
+    }
     //原图
-    var orginImage : UIImage?
+    var orginImage : UIImage?{
+        get{
+            return UIImage.init(named: self.orginImagePath!)
+        }
+    }
     //年份
     var year : Int?
     //月份
