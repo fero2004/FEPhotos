@@ -25,6 +25,10 @@
 		190EE53522B600AE00E2A47E /* FEPhotoSectionHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 190EE53322B600AE00E2A47E /* FEPhotoSectionHeaderView.xib */; };
 		190EE53822B6121E00E2A47E /* FEPhotoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 190EE53622B6121E00E2A47E /* FEPhotoCell.swift */; };
 		190EE53922B6121E00E2A47E /* FEPhotoCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 190EE53722B6121E00E2A47E /* FEPhotoCell.xib */; };
+		1914E98222BB5A1800C5E6B4 /* FEAnimatorDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1914E98122BB5A1800C5E6B4 /* FEAnimatorDelegate.swift */; };
+		1914E98422BB5C4A00C5E6B4 /* FENavigationControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1914E98322BB5C4A00C5E6B4 /* FENavigationControllerDelegate.swift */; };
+		19154AC122BA781400FF3067 /* FEPhotoCollectionViewAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19154AC022BA781400FF3067 /* FEPhotoCollectionViewAnimator.swift */; };
+		19154AC322BA816200FF3067 /* FEPhotoBaseCollectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19154AC222BA816200FF3067 /* FEPhotoBaseCollectionController.swift */; };
 		1918A12122BA233A00F1E4DE /* small_17.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1918A08722BA233900F1E4DE /* small_17.jpg */; };
 		1918A12222BA233A00F1E4DE /* small_140.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1918A08822BA233900F1E4DE /* small_140.jpg */; };
 		1918A12322BA233A00F1E4DE /* small_154.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1918A08922BA233900F1E4DE /* small_154.jpg */; };
@@ -379,6 +383,10 @@
 		190EE53322B600AE00E2A47E /* FEPhotoSectionHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FEPhotoSectionHeaderView.xib; sourceTree = "<group>"; };
 		190EE53622B6121E00E2A47E /* FEPhotoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FEPhotoCell.swift; sourceTree = "<group>"; };
 		190EE53722B6121E00E2A47E /* FEPhotoCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FEPhotoCell.xib; sourceTree = "<group>"; };
+		1914E98122BB5A1800C5E6B4 /* FEAnimatorDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FEAnimatorDelegate.swift; sourceTree = "<group>"; };
+		1914E98322BB5C4A00C5E6B4 /* FENavigationControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FENavigationControllerDelegate.swift; sourceTree = "<group>"; };
+		19154AC022BA781400FF3067 /* FEPhotoCollectionViewAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FEPhotoCollectionViewAnimator.swift; sourceTree = "<group>"; };
+		19154AC222BA816200FF3067 /* FEPhotoBaseCollectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FEPhotoBaseCollectionController.swift; sourceTree = "<group>"; };
 		1918A08722BA233900F1E4DE /* small_17.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = small_17.jpg; sourceTree = "<group>"; };
 		1918A08822BA233900F1E4DE /* small_140.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = small_140.jpg; sourceTree = "<group>"; };
 		1918A08922BA233900F1E4DE /* small_154.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = small_154.jpg; sourceTree = "<group>"; };
@@ -763,6 +771,7 @@
 			isa = PBXGroup;
 			children = (
 				190E389722B7CC2B0091E8A3 /* Images */,
+				19154ABF22BA77FC00FF3067 /* Animator */,
 				190E389422B77EB20091E8A3 /* Data */,
 				190EE52D22B6006900E2A47E /* Photo */,
 				190EE52822B6000800E2A47E /* Base */,
@@ -801,6 +810,7 @@
 			children = (
 				190EE52922B6003400E2A47E /* FEBaseTabBarViewController.swift */,
 				190EE52B22B6005100E2A47E /* FEBaseNavigationController.swift */,
+				1914E98322BB5C4A00C5E6B4 /* FENavigationControllerDelegate.swift */,
 			);
 			path = Base;
 			sourceTree = "<group>";
@@ -808,6 +818,7 @@
 		190EE52D22B6006900E2A47E /* Photo */ = {
 			isa = PBXGroup;
 			children = (
+				19154AC222BA816200FF3067 /* FEPhotoBaseCollectionController.swift */,
 				190EE52E22B6008200E2A47E /* FEPhotoCollectionController.swift */,
 				190EE52F22B6008200E2A47E /* FEPhotoCollectionController.xib */,
 				190EE53222B600AE00E2A47E /* FEPhotoSectionHeaderView.swift */,
@@ -816,6 +827,15 @@
 				190EE53722B6121E00E2A47E /* FEPhotoCell.xib */,
 			);
 			path = Photo;
+			sourceTree = "<group>";
+		};
+		19154ABF22BA77FC00FF3067 /* Animator */ = {
+			isa = PBXGroup;
+			children = (
+				1914E98122BB5A1800C5E6B4 /* FEAnimatorDelegate.swift */,
+				19154AC022BA781400FF3067 /* FEPhotoCollectionViewAnimator.swift */,
+			);
+			path = Animator;
 			sourceTree = "<group>";
 		};
 		1918A08622BA233900F1E4DE /* small */ = {
@@ -1644,13 +1664,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				190EE52A22B6003400E2A47E /* FEBaseTabBarViewController.swift in Sources */,
+				19154AC322BA816200FF3067 /* FEPhotoBaseCollectionController.swift in Sources */,
+				1914E98422BB5C4A00C5E6B4 /* FENavigationControllerDelegate.swift in Sources */,
 				190EE53822B6121E00E2A47E /* FEPhotoCell.swift in Sources */,
 				190EE4FD22B5FFE800E2A47E /* ViewController.swift in Sources */,
 				190E389622B77F380091E8A3 /* FEPhotoCellData.swift in Sources */,
 				190EE4F922B5FFE800E2A47E /* AppDelegate.swift in Sources */,
+				19154AC122BA781400FF3067 /* FEPhotoCollectionViewAnimator.swift in Sources */,
 				190E389322B7426E0091E8A3 /* FECommon.swift in Sources */,
 				190EE53022B6008200E2A47E /* FEPhotoCollectionController.swift in Sources */,
 				190EE4FB22B5FFE800E2A47E /* SceneDelegate.swift in Sources */,
+				1914E98222BB5A1800C5E6B4 /* FEAnimatorDelegate.swift in Sources */,
 				190EE52C22B6005100E2A47E /* FEBaseNavigationController.swift in Sources */,
 				191FAD4022B92E87002B0E47 /* FEPhotoSectionData.swift in Sources */,
 				190EE53422B600AE00E2A47E /* FEPhotoSectionHeaderView.swift in Sources */,

@@ -31,7 +31,7 @@ class FEPhotoCellData: NSObject {
     //中图
     var middleImage : UIImage?{
         get{
-            return UIImage.init(named: self.middleImagePath!)
+            return UIImage.init(named: self.smallImagePath!)
         }
     }
     //大图

@@ -10,6 +10,8 @@ import UIKit
 import SwifterSwift
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
+    let navDelegate = FENavigationControllerDelegate()
+
     var window: UIWindow?
     
     func buildData() -> [FEPhotoCellData] {
@@ -82,6 +84,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         photo.controllerType = .root
         photo.photos = photos
         let nav = FEBaseNavigationController.init(rootViewController: photo)
+        nav.delegate = navDelegate
         tab.viewControllers = [nav]
         self.window?.rootViewController = tab
     }

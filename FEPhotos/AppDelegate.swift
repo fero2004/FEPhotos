@@ -12,7 +12,7 @@ import UIKit
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-
+    let navDelegate = FENavigationControllerDelegate()
     var window: UIWindow?
     
     func buildData() -> [FEPhotoCellData] {
@@ -80,6 +80,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             photo.controllerType = .root
             photo.photos = photos
             let nav = FEBaseNavigationController.init(rootViewController: photo)
+            nav.delegate = navDelegate
             tab.viewControllers = [nav]
             self.window?.rootViewController = tab
         }
