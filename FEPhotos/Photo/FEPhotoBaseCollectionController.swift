@@ -55,12 +55,16 @@ class FEPhotoBaseCollectionController: UICollectionViewController {
             //+ (self.contentFrame.size.height - touchCellCenter.y) : 将最下方的cell放到点击的位置
             var offsety = center.y - self.collectionView.frame.height
                 + self.contentFrame.size.height - self.touchCellCenter.y
-            let maxOffset = self.collectionView.contentSize.height - self.contentFrame.size.height + FECommon.NavBarHeight
+            var maxOffset = self.collectionView.contentSize.height - self.contentFrame.size.height + FECommon.NavBarHeight
+            
+            if (maxOffset <= -FECommon.NavBarHeight) {
+                maxOffset = -FECommon.NavBarHeight
+            }
             
             //计算sectioheader是否有挡住cell
             //相当于屏幕计算
             let sectioheaderAttributes = self.collectionView.layoutAttributesForSupplementaryElement(ofKind: UICollectionView.elementKindSectionHeader, at: IndexPath.init(row: row, section: section))
-            //实际上只有屏幕的第一个header才有可能挡住cell,所以直接从y=0开始
+            //实际上只有屏幕的第一个header才有可能挡住cell(不确定？？),所以直接从y=0开始
             let screenSectioheaderAttributes = CGRect.init(x: 0, y: 0, width: sectioheaderAttributes!.frame.width, height: sectioheaderAttributes!.frame.height)
             //计算cell相当于屏幕的大小位置
             let screenCellRect = CGRect.init(x: self.touchCellCenter.x - cellLayoutAttributes!.frame.width/2,

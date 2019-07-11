@@ -12,6 +12,12 @@ class FEPhotoSectionHeaderView: UICollectionReusableView {
    
     @IBOutlet var titleLabel : UILabel!
     
+    override var alpha: CGFloat {
+        didSet{
+            print(222)
+        }
+    }
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
