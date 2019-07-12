@@ -30,7 +30,7 @@ class FEPhotoBaseCollectionController: UICollectionViewController {
     var controllerType : FEPhotoControllerType! = .root
     var contentFrame : CGRect = CGRect.zero
     // 点击cell中心相对于window的位置
-    var touchCellCenter : CGPoint = CGPoint.zero
+//    var touchCellCenter : CGPoint = CGPoint.zero
 
     var selectedPhoto : FEPhotoCellData?
     //显示数据
@@ -46,20 +46,41 @@ class FEPhotoBaseCollectionController: UICollectionViewController {
     }
     
     //滑倒上个界面选择的cell位置,手指的位置
-    func scroollToSelectedPhotoInDatas () {
+    func scroollToSelectedPhotoInDatas (pre : FEPhotoBaseCollectionController!) {
         let (row, section) = self.findSelectedPhotoInDatas() ?? (-1, -1)
-        if (row >= 0) {
+        let (preRow, preSection) = pre.findSelectedPhotoInDatas() ?? (-1, -1)
+        if (row >= 0 && preRow >= 0) {
             let cellLayoutAttributes = self.collectionView.layoutAttributesForItem(at: IndexPath.init(row: row, section: section))
             let center = CGPoint.init(x: cellLayoutAttributes!.frame.midX, y: cellLayoutAttributes!.frame.midY)
-            //center.y - self.collectionView.frame.height 将cell放到屏幕的最下方,刚好看见
-            //+ (self.contentFrame.size.height - touchCellCenter.y) : 将最下方的cell放到点击的位置
+            
+            let precell = pre.collectionView.cellForItem(at: IndexPath.init(row: preRow, section: preSection))
+            //相对于window的位置
+            let rect = precell?.convert(precell!.bounds, to: UIApplication.shared.keyWindow)
+            let touchCellCenter = CGPoint.init(x: rect!.midX, y: rect!.midY)
+            
             var offsety = center.y - self.collectionView.frame.height
-                + self.contentFrame.size.height - self.touchCellCenter.y
+                + self.contentFrame.size.height - touchCellCenter.y
             var maxOffset = self.collectionView.contentSize.height - self.contentFrame.size.height + FECommon.NavBarHeight
             
             if (maxOffset <= -FECommon.NavBarHeight) {
                 maxOffset = -FECommon.NavBarHeight
             }
+            
+//            if let sectioheaderAttributes = self.collectionView.layoutAttributesForSupplementaryElement(ofKind: UICollectionView.elementKindSectionHeader, at: IndexPath.init(row: 0, section: section)){
+//
+//                let items = self.collectionView.numberOfItems(inSection: section)
+//                let first = IndexPath(item: 0, section: section)
+//                let last = IndexPath(item: items - 1, section: section)
+//                let firstFrame = collectionView.layoutAttributesForItem(at: first)!.frame
+//                let lastFrame = collectionView.layoutAttributesForItem(at: last)!.frame
+//                let rectForSection = firstFrame.union(lastFrame)
+////                if (offsety + FECommon.NavBarHeight > rectForSection.minY) {
+////                    print(111)
+////                }
+////                if (offsety + FECommon.NavBarHeight <= rectForSection.maxY + sectioheaderAttributes.frame.height) {
+////                    print(111)
+////                }
+//            }
             
             //计算sectioheader是否有挡住cell
             //相当于屏幕计算
@@ -67,21 +88,19 @@ class FEPhotoBaseCollectionController: UICollectionViewController {
             //实际上只有屏幕的第一个header才有可能挡住cell(不确定？？),所以直接从y=0开始
             let screenSectioheaderAttributes = CGRect.init(x: 0, y: 0, width: sectioheaderAttributes!.frame.width, height: sectioheaderAttributes!.frame.height)
             //计算cell相当于屏幕的大小位置
-            let screenCellRect = CGRect.init(x: self.touchCellCenter.x - cellLayoutAttributes!.frame.width/2,
-                                         y: self.touchCellCenter.y - FECommon.NavBarHeight - cellLayoutAttributes!.frame.height/2,
+            let screenCellRect = CGRect.init(x: touchCellCenter.x - cellLayoutAttributes!.frame.width/2,
+                                         y: touchCellCenter.y - FECommon.NavBarHeight - cellLayoutAttributes!.frame.height/2,
                                          width: cellLayoutAttributes!.frame.width,
                                          height: cellLayoutAttributes!.frame.height)
             if(screenCellRect.intersects(screenSectioheaderAttributes)){
                 let temprect = screenCellRect.intersection(screenSectioheaderAttributes)
                 offsety = offsety - temprect.height
             }
-//            if (offsety <= -FECommon.NavBarHeight) {
-//            if (section == 0 && row < self.controllerType.itemCount()) {
-//                offsety = -FECommon.NavBarHeight
-//            } else if (offsety >= maxOffset) {
-//                offsety = maxOffset
-//            }
-            if (offsety >= maxOffset) {
+            
+            if (offsety <= -FECommon.NavBarHeight) {
+                offsety = -FECommon.NavBarHeight
+            }
+            else if (offsety >= maxOffset) {
                 offsety = maxOffset
             }
             self.collectionView.setContentOffset(CGPoint.init(x: 0, y: offsety ), animated: false)

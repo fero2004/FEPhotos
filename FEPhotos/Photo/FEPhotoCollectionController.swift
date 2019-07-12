@@ -109,11 +109,11 @@ class FEPhotoCollectionController: FEPhotoBaseCollectionController,UICollectionV
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let sectionData = self.datas[indexPath.section]
         let photoData = sectionData.photos[indexPath.row]
-        
-        let cell = collectionView.cellForItem(at: indexPath)
-        //相对于window的位置
-        let rect = cell?.convert(cell!.bounds, to: UIApplication.shared.keyWindow)
-        let center = CGPoint.init(x: rect!.midX, y: rect!.midY)
+//        
+//        let cell = collectionView.cellForItem(at: indexPath)
+//        //相对于window的位置
+//        let rect = cell?.convert(cell!.bounds, to: UIApplication.shared.keyWindow)
+//        let center = CGPoint.init(x: rect!.midX, y: rect!.midY)
         
 //        let view = UIView()
 //        view.backgroundColor = UIColor.red
@@ -123,7 +123,7 @@ class FEPhotoCollectionController: FEPhotoBaseCollectionController,UICollectionV
         
         self.selectedPhoto = photoData
         let con = FEPhotoCollectionController.init(nibName: "FEPhotoCollectionController", bundle: nil)
-        con.touchCellCenter = center
+//        con.touchCellCenter = center
         con.controllerType = self.controllerType == .root ? .step : .detail
         con.photos = self.photos
         con.selectedPhoto = photoData

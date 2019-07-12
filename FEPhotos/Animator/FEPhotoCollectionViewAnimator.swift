@@ -31,6 +31,8 @@ class FEPhotoAnimatorRowItem : NSObject {
     var type : FEPhotoAnimatorRowItemType = .from
     var from = FEPhotoAnimatorRowDetailItem()
     var to = FEPhotoAnimatorRowDetailItem()
+    //临时存一下结束的位置,主要用在返回动画上
+    var rect : CGRect = CGRect.zero
 }
 
 class FEPhotoAnimatorRow : NSObject {
@@ -59,127 +61,6 @@ class FEPhotoCollectionViewAnimator: NSObject,UIViewControllerAnimatedTransition
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         return animationDuration
     }
-    
-//    func pushAnimateIntoViewController(transitionContext: UIViewControllerContextTransitioning!,fromViewController : FEPhotoBaseCollectionController!, toViewController : FEPhotoBaseCollectionController!) {
-//
-//        let fromLayout = fromViewController.collectionViewLayout as! UICollectionViewFlowLayout
-//        let fromCellSize = fromLayout.itemSize
-//
-//        let savebackgroundColor = toViewController.view.backgroundColor
-//
-//        toViewController.view.backgroundColor = UIColor.clear
-//        //先让alpha为0,让reloadData的时候看不见cell,如果不设置为0,reloadData的时候会看见cell出现在整个屏幕然后瞬间缩小的效果
-//        toViewController.view.alpha = 0
-//
-//        toViewController.collectionView.setNeedsLayout()
-//        toViewController.collectionView.layoutIfNeeded()
-//        // scroollToSelectedPhotoInDatas必须在DispatchQueue.main.async执行,要不contentoffset不准确
-//        DispatchQueue.main.async {
-//            toViewController.scroollToSelectedPhotoInDatas()
-//            //必须reloaddata,cell的位置才准确
-//            toViewController.collectionView.reloadData{
-//                //短时间恢复toViewController.view.alpha,恢复可见
-//                UIView.animate(withDuration: 0.01, animations: { () -> Void in
-//                    toViewController.view.alpha = 1
-//                    toViewController.view.backgroundColor = savebackgroundColor
-//                })
-//                UIView.animate(withDuration: self.animationDuration, animations: {
-//                }) { (b) in
-//                    transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
-//                }
-//                let (rowSelected, sectionSelected) = toViewController.findSelectedPhotoInDatas() ?? (-1, -1)
-//                if (rowSelected >= 0) {
-//                    let frompoint = CGPoint.init(x: toViewController.touchCellCenter.x, y: toViewController.collectionView!.contentOffset.y + toViewController.touchCellCenter.y)
-//
-//                    if let indexPathsForVisibleCells = toViewController.collectionView?.indexPathsForVisibleItems {
-//                        //排序
-//                        let indexPaths = indexPathsForVisibleCells.sorted(by: { (a,b) -> Bool in
-//                            return a.compare(b) == .orderedAscending
-//                        })
-//                        var startcellIndexPath = indexPaths[0]
-//                        //                            let startcell = toViewController.collectionView.cellForItem(at: startcellIndexPath)
-//                        var row = 0
-//                        var col = 0
-//
-//                        var indexPathRowAndCol = Dictionary<IndexPath,(Int,Int)>()
-//                        indexPathRowAndCol[startcellIndexPath] = (row,col)
-//
-//                        var saveRect = Dictionary<IndexPath,CGRect>()
-//                        //一行的个数
-//                        let numberInRow = toViewController.controllerType.itemCount()
-//                        //将cell紧凑排列
-//                        for indexPath in indexPaths {
-//                            if (indexPath != startcellIndexPath) {
-//                                col = indexPath.row % numberInRow
-//                                if (indexPath.section == startcellIndexPath.section) {
-//                                    indexPathRowAndCol[indexPath] = (row,col)
-//                                    if ((indexPath.row + 1) % numberInRow == 0) {
-//                                        row = row + 1
-//                                    }
-//                                } else {
-//                                    row = row + 1
-//                                    indexPathRowAndCol[indexPath] = (row,col)
-//                                }
-//                                startcellIndexPath = indexPath
-//                            }
-//                            let cell = toViewController.collectionView.cellForItem(at: indexPath)
-//                            saveRect[indexPath] = cell?.frame
-//                        }
-//                        var orginx : CGFloat = 0.0
-//                        var orginy : CGFloat = 0.0
-//                        var moveSize = CGSize.zero
-//                        var cells = Dictionary<IndexPath,UICollectionViewCell>()//[UICollectionViewCell]()
-//
-//                        for indexPath in indexPaths {
-//                            let sectionheader = toViewController.collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: indexPath)
-//                            sectionheader?.isHidden = true
-//                            let cell = toViewController.collectionView.cellForItem(at: indexPath)
-//                            let (row,col) = indexPathRowAndCol[indexPath]!
-//                            orginx = CGFloat(col) * fromCellSize.width
-//                            orginy = CGFloat(row) * fromCellSize.height
-//                            cell?.frame = CGRect.init(x: orginx, y: orginy, width: fromCellSize.width, height: fromCellSize.height)
-//                            //找到移动的cell
-//                            if (indexPath.row == rowSelected && indexPath.section == sectionSelected) {
-//                                moveSize = CGSize.init(width: frompoint.x - cell!.center.x ,
-//                                                       height: frompoint.y - cell!.center.y)
-//                            }
-//                            //                                cells.append(cell!)
-//                            cells[indexPath] = cell
-//                        }
-//                        //整体移动
-//                        for key in cells.keys {
-//                            let cell = cells[key]! as! FEPhotoCell
-//                            let width = saveRect[key]!.size.width
-//                            cell.alpha = 0
-//                            cell.transform.scaledBy(x: width/fromCellSize.width, y: width/fromCellSize.width)
-//                            cell.imageView.frame = CGRect.init(x: 0, y: 0, width: fromCellSize.width, height: fromCellSize.height)
-//                            cell.center = CGPoint.init(x: cell.center.x + moveSize.width,
-//                                                       y: cell.center.y + moveSize.height)
-//                        }
-//                        for indexPath in cells.keys {
-//                            let item = cells[indexPath] as? FEPhotoCell
-//                            UIView.animate(withDuration: self.animationDuration,
-//                                           delay: 0,
-//                                           usingSpringWithDamping: 0.75,
-//                                           initialSpringVelocity: 0,
-//                                           options: [.curveEaseOut, .allowUserInteraction, .beginFromCurrentState],
-//                                           animations: { () -> Void in
-//                                            item?.transform.scaledBy(x: 1, y: 1)
-//                                            item?.alpha = 1
-//                                            item?.frame = saveRect[indexPath]!
-//                                            if let frame = item?.frame{
-//                                                item?.imageView.frame = CGRect.init(x: 0, y: 0, width: frame.size.width, height: frame.size.height)
-//                                            }
-//
-//                            },
-//                                           completion: { (b) in
-//                            })
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
     
     func buildRows(viewController : FEPhotoBaseCollectionController!, fill : Bool! = false) -> [FEPhotoAnimatorRow]? {
         if let indexPathsForVisibleCells = viewController.collectionView?.indexPathsForVisibleItems,
@@ -302,6 +183,9 @@ class FEPhotoCollectionViewAnimator: NSObject,UIViewControllerAnimatedTransition
                             //合并
                             startItem.to = item.from
                             startItem.type = .fromAndTo
+                            
+                            item.to = startItem.from
+                            item.type = .fromAndTo
                             isFound = true
                         }
                     }
@@ -329,6 +213,9 @@ class FEPhotoCollectionViewAnimator: NSObject,UIViewControllerAnimatedTransition
                             //合并
                             startItem.to = item.from
                             startItem.type = .fromAndTo
+                            
+                            item.to = startItem.from
+                            item.type = .fromAndTo
                             isFound = true
                         }
                     }
@@ -381,13 +268,24 @@ class FEPhotoCollectionViewAnimator: NSObject,UIViewControllerAnimatedTransition
         }
         if let fromSectionheader = fromViewController.collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: item.from.indexPath!) {
             if(!frame.isEmpty) {
+                // 判断是否吸附在顶部
+                let rect = fromSectionheader.convert(fromSectionheader.bounds, to: UIApplication.shared.keyWindow)
+                let temprect = CGRect.init(x: 0,
+                                           y: FECommon.NavBarHeight - fromSectionheader.frame.height,
+                                           width: fromSectionheader.frame.width,
+                                           height: fromSectionheader.frame.height * 2)
+
                 UIView.animate(withDuration: self.animationDuration,
                                delay: 0,
                                usingSpringWithDamping: 0.75,
                                initialSpringVelocity: 0,
                                options: [.curveEaseOut, .allowUserInteraction, .beginFromCurrentState],
                                animations: { () -> Void in
-                                fromSectionheader.alpha = 0
+                                if (temprect.intersection(rect).height > 0) {
+                                }
+                                else {
+                                    fromSectionheader.alpha = 0
+                                }
                                 fromSectionheader.frame = frame
                 },
                                completion: { (b) in
@@ -463,7 +361,7 @@ class FEPhotoCollectionViewAnimator: NSObject,UIViewControllerAnimatedTransition
         self.doPushAnimateInfromViewControllerWithSection(row: row, fromViewController: fromViewController, toViewController:toViewController, toRect: toRect)
     }
     
-    func doPushAnimateInfromViewControllerWithRow(row: FEPhotoAnimatorRow!,startItem: FEPhotoAnimatorRowItem!,fromViewController : FEPhotoBaseCollectionController!, toViewController : FEPhotoBaseCollectionController!) -> CGFloat {
+    func doPushAnimateInfromViewControllerWithRow(row: FEPhotoAnimatorRow!,startItem: FEPhotoAnimatorRowItem!,fromViewController : FEPhotoBaseCollectionController!, toViewController : FEPhotoBaseCollectionController!, compute : Bool = false) -> CGFloat {
         var startx : CGFloat = MAXFLOAT.cgFloat
         var toRect = [-9999:CGRect.zero]
         if let toIndexPath = startItem.to.indexPath{
@@ -486,15 +384,21 @@ class FEPhotoCollectionViewAnimator: NSObject,UIViewControllerAnimatedTransition
                                         y: toCenter.y - toSize.height/2,
                                         width: toSize.width,
                                         height: toSize.height)
+                let item = row.items[i]
+                // 其实可以不用toRect,直接用item.rect,遗留代码,后续优化 TODO
+                item.rect = toRect[i]!
                 i = i + 1
                 x = x + toSize.width
             }
-            self.doPushRowAnimate(row: row, fromViewController: fromViewController, toViewController: toViewController, toRect: toRect)
+            if (!compute) {
+                self.doPushRowAnimate(row: row, fromViewController: fromViewController, toViewController: toViewController, toRect: toRect)
+            }
         }
         return startx
     }
     
-    func doPushAnimateInfromViewController(fromRows : [FEPhotoAnimatorRow]? ,toRows : [FEPhotoAnimatorRow]?,fromViewController : FEPhotoBaseCollectionController!, toViewController : FEPhotoBaseCollectionController!,fromRowIndex : Int!) {
+    // compute是否只是用做计算结束坐标,如果是计算的话,就不做动画.主要用在返回动画,返回动画,只算出结束坐标
+    func doPushAnimateInfromViewController(fromRows : [FEPhotoAnimatorRow]? ,toRows : [FEPhotoAnimatorRow]?,fromViewController : FEPhotoBaseCollectionController!, toViewController : FEPhotoBaseCollectionController!,fromRowIndex : Int!, compute : Bool = false) {
         var startIndex = 0
         var centerx : CGFloat = 0.0
 //        var toRowsRect: [Int:[Int:CGRect]] = [-9999:[-9999:CGRect.zero]]
@@ -512,7 +416,7 @@ class FEPhotoCollectionViewAnimator: NSObject,UIViewControllerAnimatedTransition
                             startIndex = row.items.firstIndex(of: item) ?? -1
                             find = true
                             //一行做动画
-                            let value = self.doPushAnimateInfromViewControllerWithRow(row: row, startItem: item, fromViewController: fromViewController,toViewController: toViewController)
+                            let value = self.doPushAnimateInfromViewControllerWithRow(row: row, startItem: item, fromViewController: fromViewController,toViewController: toViewController,compute: compute)
                             centerx = value
 //                            let temprect = value.1
 //                            toRowsRect[i] = temprect
@@ -539,7 +443,8 @@ class FEPhotoCollectionViewAnimator: NSObject,UIViewControllerAnimatedTransition
                     if let sectionheader = toViewController.collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: tofirstItem.indexPath!) {
                         let rect = sectionheader.convert(sectionheader.bounds, to: UIApplication.shared.keyWindow)
                         startFrame = rect
-                        startFrame.origin.y = startFrame.origin.y - FECommon.NavBarHeight
+                        // 要减去startFrame.height,因为是悬浮的
+                        startFrame.origin.y = startFrame.origin.y - FECommon.NavBarHeight - startFrame.height
                     }
                 }
                 else
@@ -573,12 +478,17 @@ class FEPhotoCollectionViewAnimator: NSObject,UIViewControllerAnimatedTransition
                                                     y: centery - toSize.height/2,
                                                     width: toSize.width,
                                                     height: toSize.height)
+                            let item = row.items[j]
+                            // 其实可以不用toRect,直接用item.rect,遗留代码,后续优化 TODO
+                            item.rect = toRect[j]!
                             j = j + 1
                             x = x + toSize.width
                         }
 //                        let index = fromRows.firstIndex(of: row)!
 //                        toRowsRect[index] = toRect
-                        self.doPushRowAnimate(row: row, fromViewController: fromViewController, toViewController: toViewController, toRect: toRect)
+                        if (!compute) {
+                            self.doPushRowAnimate(row: row, fromViewController: fromViewController, toViewController: toViewController, toRect: toRect)
+                        }
                         //如果第一个是sectionheader减去sectionheader的高度
                         if (row.type == .adjoinSection){
                             if let sectionheader = fromViewController.collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: row.items.first!.from.indexPath!) {
@@ -613,12 +523,17 @@ class FEPhotoCollectionViewAnimator: NSObject,UIViewControllerAnimatedTransition
                                                     y: centery - toSize.height/2,
                                                     width: toSize.width,
                                                     height: toSize.height)
+                            let item = row.items[j]
+                            // 其实可以不用toRect,直接用item.rect,遗留代码,后续优化 TODO
+                            item.rect = toRect[j]!
                             j = j + 1
                             x = x + toSize.width
                         }
 //                        let index = fromRows.firstIndex(of: row)!
 //                        toRowsRect[index] = toRect
-                        self.doPushRowAnimate(row: row, fromViewController: fromViewController, toViewController: toViewController, toRect: toRect)
+                        if (!compute) {
+                             self.doPushRowAnimate(row: row, fromViewController: fromViewController, toViewController: toViewController, toRect: toRect)
+                        }
                         i = i + 1
                         if (i < endRows.count) {
                             let temprow = endRows[i]
@@ -634,11 +549,10 @@ class FEPhotoCollectionViewAnimator: NSObject,UIViewControllerAnimatedTransition
                     }
                 }
             }
-//            self.doPushAnimateInfromViewControllerWithSection(fromRows: fromRows, toRows: toRows, fromViewController: fromViewController, toViewController: toViewController,toRowsRect: toRowsRect)
         }
     }
     
-    func doPushAnimateInToViewController(fromRows : [FEPhotoAnimatorRow]? ,toRows : [FEPhotoAnimatorRow]?,fromViewController : FEPhotoBaseCollectionController!, toViewController : FEPhotoBaseCollectionController!,fromRowIndex : Int!, toRowIndex : Int!, startIndex: Int!) {
+    func doPushAnimateInToViewController(fromRows : [FEPhotoAnimatorRow]? ,toRows : [FEPhotoAnimatorRow]?,fromViewController : FEPhotoBaseCollectionController!, toViewController : FEPhotoBaseCollectionController!,fromRowIndex : Int!, toRowIndex : Int!, startIndex: Int!, compute : Bool = false) {
         if let fromRows = fromRows, let toRows = toRows{
             if(fromRowIndex >= 0 && toRowIndex >= 0 && startIndex >= 0) {
                 let fromLayout = fromViewController.collectionViewLayout as! UICollectionViewFlowLayout
@@ -664,33 +578,36 @@ class FEPhotoCollectionViewAnimator: NSObject,UIViewControllerAnimatedTransition
                                                 width: fromSize.width,
                                                 height: fromSize.height)
                         let item = toRow.items[k]
-                        if let cell = toViewController.collectionView.cellForItem(at: item.from.indexPath!) as? FEPhotoCell{
-                            let sectionheader = toViewController.collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: item.from.indexPath!)
-                            let saveFrame = cell.frame
-                            let realy = tempCetnery + toViewController.collectionView.contentOffset.y
-                            frame = CGRect.init(x: frame.origin.x,
-                                                y: realy - frame.height/2,
-                                                width: frame.width,
-                                                height: frame.height)
-                            cell.frame = frame
-                            cell.alpha = 0
-                            cell.imageView.frame = CGRect.init(x: 0, y: 0, width: frame.width, height: frame.height)
-                            sectionheader?.alpha = 0
-                            if(sectionheader != nil) {
-                                heads.append(sectionheader!)
+                        item.rect = frame
+                        if (!compute) {
+                            if let cell = toViewController.collectionView.cellForItem(at: item.from.indexPath!) as? FEPhotoCell{
+                                let sectionheader = toViewController.collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: item.from.indexPath!)
+                                let saveFrame = cell.frame
+                                let realy = tempCetnery + toViewController.collectionView.contentOffset.y
+                                frame = CGRect.init(x: frame.origin.x,
+                                                    y: realy - frame.height/2,
+                                                    width: frame.width,
+                                                    height: frame.height)
+                                cell.frame = frame
+                                cell.alpha = 0
+                                cell.imageView.frame = CGRect.init(x: 0, y: 0, width: frame.width, height: frame.height)
+                                sectionheader?.alpha = 0
+                                if(sectionheader != nil) {
+                                    heads.append(sectionheader!)
+                                }
+                                UIView.animate(withDuration: self.animationDuration,
+                                               delay: 0,
+                                               usingSpringWithDamping: 0.75,
+                                               initialSpringVelocity: 0,
+                                               options: [.curveEaseOut, .allowUserInteraction, .beginFromCurrentState],
+                                               animations: { () -> Void in
+                                                cell.alpha = 1
+                                                cell.frame = saveFrame
+                                                cell.imageView.frame = CGRect.init(x: 0, y: 0, width: saveFrame.width, height: saveFrame.height)
+                                },
+                                               completion: { (b) in
+                                })
                             }
-                            UIView.animate(withDuration: self.animationDuration,
-                                           delay: 0,
-                                           usingSpringWithDamping: 0.75,
-                                           initialSpringVelocity: 0,
-                                           options: [.curveEaseOut, .allowUserInteraction, .beginFromCurrentState],
-                                           animations: { () -> Void in
-                                            cell.alpha = 1
-                                            cell.frame = saveFrame
-                                            cell.imageView.frame = CGRect.init(x: 0, y: 0, width: saveFrame.width, height: saveFrame.height)
-                            },
-                                           completion: { (b) in
-                            })
                         }
                         orginx = orginx + fromSize.width
                     }
@@ -711,10 +628,22 @@ class FEPhotoCollectionViewAnimator: NSObject,UIViewControllerAnimatedTransition
                     i = i - 1
                 }
                 
-                
                 tempCetnery = centery
                 i = toRowIndex + 1
                 j  = fromRowIndex + 1
+                var fromRow : FEPhotoAnimatorRow?
+                if (j < fromRows.count) {
+                    fromRow = fromRows[j]
+                }
+                let fromRowItem = fromRow?.items.first
+                if(fromRowItem != nil && fromRowItem?.type == .fromAndTo) {
+                    if let cell = fromViewController.collectionView.cellForItem(at: fromRowItem!.from.indexPath!) {
+                        let rect = cell.convert(cell.bounds, to: UIApplication.shared.keyWindow)
+                        tempCetnery = rect.midY
+                    }
+                } else {
+                    tempCetnery = tempCetnery + fromSize.height
+                }
                 while i < toRows.count {
                     let toRow = toRows[i]
                     var orginx = CGFloat(startIndex) * fromSize.width
@@ -724,35 +653,38 @@ class FEPhotoCollectionViewAnimator: NSObject,UIViewControllerAnimatedTransition
                                                 width: fromSize.width,
                                                 height: fromSize.height)
                         let item = toRow.items[k]
-                        if let cell = toViewController.collectionView.cellForItem(at: item.from.indexPath!) as? FEPhotoCell {
-                            let sectionheader = toViewController.collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: item.from.indexPath!)
-                            let saveFrame = cell.frame
-                            let realy = tempCetnery + toViewController.collectionView.contentOffset.y
-                            frame = CGRect.init(x: frame.origin.x,
-                                                y: realy - frame.height/2,
-                                                width: frame.width,
-                                                height: frame.height)
-                            cell.frame = frame
-                            cell.alpha = 0
-                            cell.imageView.frame = CGRect.init(x: 0, y: 0, width: frame.width, height: frame.height)
-                            sectionheader?.alpha = 0
-                            if(sectionheader != nil) {
-                                heads.append(sectionheader!)
+                        item.rect = frame
+                        if (!compute) {
+                            if let cell = toViewController.collectionView.cellForItem(at: item.from.indexPath!) as? FEPhotoCell {
+                                let sectionheader = toViewController.collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: item.from.indexPath!)
+                                let saveFrame = cell.frame
+                                let realy = tempCetnery + toViewController.collectionView.contentOffset.y
+                                frame = CGRect.init(x: frame.origin.x,
+                                                    y: realy - frame.height/2,
+                                                    width: frame.width,
+                                                    height: frame.height)
+                                cell.frame = frame
+                                cell.alpha = 0
+                                cell.imageView.frame = CGRect.init(x: 0, y: 0, width: frame.width, height: frame.height)
+                                sectionheader?.alpha = 0
+                                if(sectionheader != nil) {
+                                    heads.append(sectionheader!)
+                                }
+                                UIView.animate(withDuration: self.animationDuration,
+                                               delay: 0,
+                                               usingSpringWithDamping: 0.75,
+                                               initialSpringVelocity: 0,
+                                               options: [.curveEaseOut, .allowUserInteraction, .beginFromCurrentState],
+                                               animations: { () -> Void in
+                                                cell.alpha = 1
+                                                cell.frame = saveFrame
+                                                cell.imageView.frame = CGRect.init(x: 0, y: 0, width: saveFrame.width, height: saveFrame.height)
+                                                //                                            sectionheader?.alpha = 1
+                                },
+                                               completion: { (b) in
+                                                
+                                })
                             }
-                            UIView.animate(withDuration: self.animationDuration,
-                                           delay: 0,
-                                           usingSpringWithDamping: 0.75,
-                                           initialSpringVelocity: 0,
-                                           options: [.curveEaseOut, .allowUserInteraction, .beginFromCurrentState],
-                                           animations: { () -> Void in
-                                            cell.alpha = 1
-                                            cell.frame = saveFrame
-                                            cell.imageView.frame = CGRect.init(x: 0, y: 0, width: saveFrame.width, height: saveFrame.height)
-//                                            sectionheader?.alpha = 1
-                            },
-                                           completion: { (b) in
-                                            
-                            })
                         }
                         orginx = orginx + fromSize.width
                     }
@@ -772,16 +704,29 @@ class FEPhotoCollectionViewAnimator: NSObject,UIViewControllerAnimatedTransition
                     }
                     i = i + 1
                 }
-                //delay为了防止立即显示,会挡住cell的显示
-                for h in heads {
-                    UIView.animate(withDuration: self.animationDuration,
-                                   delay: self.animationDuration / 4,
-                                   animations: { () -> Void in
-                                    h.alpha = 1
-                    },
-                                   completion: { (b) in
-                                    
-                    })
+                if (!compute) {
+                    //delay为了防止立即显示,会挡住cell的显示
+                    for h in heads {
+                        // 判断是否吸附在顶部
+                        let rect = h.convert(h.bounds, to: UIApplication.shared.keyWindow)
+                        let temprect = CGRect.init(x: 0,
+                                                   y: FECommon.NavBarHeight - h.frame.height,
+                                                   width: h.frame.width,
+                                                   height: h.frame.height * 2)
+                        if (temprect.intersection(rect).height > 0) {
+                            h.alpha = 1
+                        } else {
+                            
+                        }
+                        UIView.animate(withDuration: self.animationDuration,
+                                       delay: self.animationDuration / 4,
+                                       animations: { () -> Void in
+                                        h.alpha = 1
+                        },
+                                       completion: { (b) in
+                                        
+                        })
+                    }
                 }
             }
         }
@@ -799,7 +744,7 @@ class FEPhotoCollectionViewAnimator: NSObject,UIViewControllerAnimatedTransition
         toViewController.collectionView.layoutIfNeeded()
         // scroollToSelectedPhotoInDatas必须在DispatchQueue.main.async执行,要不contentoffset不准确
         DispatchQueue.main.async {
-            toViewController.scroollToSelectedPhotoInDatas()
+            toViewController.scroollToSelectedPhotoInDatas(pre: fromViewController)
             //必须reloaddata,cell的位置才准确
             toViewController.collectionView.reloadData{
                 let toRows = self.buildRows(viewController: toViewController)
@@ -815,6 +760,9 @@ class FEPhotoCollectionViewAnimator: NSObject,UIViewControllerAnimatedTransition
                                 toViewController.view.isHidden = false
                 }) { (b) in
                     transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
+                //fromViewController.collectionView.reloadData必须在transitionContext.completeTransition后执行
+                    //而且必须在UIView.animate里reload,要不第一个sectionheader位置还是做动画之后的动画
+                    fromViewController.collectionView.reloadData(){}
                 }
             }
         }
@@ -829,16 +777,185 @@ class FEPhotoCollectionViewAnimator: NSObject,UIViewControllerAnimatedTransition
         toViewController.view.frame = transitionContext.finalFrame(for: toViewController)
         container.insertSubview(toViewController.view, aboveSubview: fromViewController.view)
 
-//        //开始的view动画
         self.pushAnimateInfromViewController(transitionContext: transitionContext, fromViewController: fromViewController, toViewController: toViewController)
-        //结束的view动画
-//        self.pushAnimateIntoViewController(transitionContext: transitionContext, fromViewController: fromViewController, toViewController: toViewController)
-
     }
     
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
-//        if (self.operation == .push) {
+        if (self.operation == .push) {
             self.pushAnimate(using: transitionContext)
-//        }
+        } else if(self.operation == .pop) {
+            self.popAnimate(using: transitionContext)
+        }
+    }
+}
+
+extension FEPhotoCollectionViewAnimator {
+    
+    func doPopAnimateInToViewController(fromRows : [FEPhotoAnimatorRow]? ,toRows : [FEPhotoAnimatorRow]?,fromViewController : FEPhotoBaseCollectionController!, toViewController : FEPhotoBaseCollectionController!,toRowIndex : Int!) {
+        if let toRows = toRows, let fromRows = fromRows {
+            var heads = [(IndexPath , FEPhotoAnimatorRowType,CGRect)]()//[UICollectionReusableView]()
+            //开始做动画的位置
+            self.doPushAnimateInfromViewController(fromRows: toRows, toRows: fromRows,fromViewController: toViewController,toViewController: fromViewController,fromRowIndex: toRowIndex,compute: true)
+            for row in toRows {
+                for item in row.items {
+                    if (item.from.isInvented) {
+                        continue
+                    }
+                    if let cell = toViewController.collectionView.cellForItem(at: item.from.indexPath!) as? FEPhotoCell{
+                        let saveFrame = cell.frame
+                        var frame = item.rect
+                        let centery = frame.midY + toViewController.collectionView.contentOffset.y + FECommon.NavBarHeight
+                        frame = CGRect.init(x: frame.origin.x,
+                                            y: centery - frame.height/2,
+                                            width: frame.width,
+                                            height: frame.height)
+                        cell.frame = frame
+                        cell.imageView.frame = CGRect.init(x: 0, y: 0, width: frame.width, height: frame.height)
+                        let sectionheader = toViewController.collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: item.from.indexPath!)
+                        if (sectionheader != nil) {
+                            heads.append((item.from.indexPath! , row.type, frame))
+                        }
+                        UIView.animate(withDuration: self.animationDuration / 2,
+                                       delay: 0,
+//                                       usingSpringWithDamping: 0.75,
+//                                       initialSpringVelocity: 0,
+                                       options: [.curveEaseOut, .allowUserInteraction, .beginFromCurrentState],
+                                       animations: { () -> Void in
+                                        cell.alpha = 1
+                                        cell.frame = saveFrame
+                                        cell.imageView.frame = CGRect.init(x: 0, y: 0, width: saveFrame.width, height: saveFrame.height)
+                                        //                                            sectionheader?.alpha = 1
+                        },
+                                       completion: { (b) in
+                                        
+                        })
+                    }
+                }
+            }
+            for (indexPath, type, cellFrame) in heads {
+                let h = toViewController.collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: indexPath)!
+                let saveFrame = h.frame
+                if (type == .adjoinSection) {
+                    h.frame = CGRect.init(x: 0,
+                                          y: cellFrame.minY - h.frame.height,
+                                          width: h.frame.width,
+                                          height: h.frame.height)
+                    UIView.animate(withDuration: self.animationDuration / 2,
+                                   delay: 0,
+                                   animations: { () -> Void in
+                                    h.frame = saveFrame
+                    },
+                                   completion: { (b) in
+                                    
+                    })
+                }
+            }
+        }
+    }
+    
+    func doPopAnimateInFromViewController(fromRows : [FEPhotoAnimatorRow]? ,toRows : [FEPhotoAnimatorRow]?,fromViewController : FEPhotoBaseCollectionController!, toViewController : FEPhotoBaseCollectionController!,fromRowIndex : Int!, toRowIndex : Int!, startIndex: Int!) {
+        if let toRows = toRows, let fromRows = fromRows {
+            self.doPushAnimateInToViewController(fromRows: toRows, toRows: fromRows, fromViewController: toViewController, toViewController: fromViewController, fromRowIndex: toRowIndex, toRowIndex: fromRowIndex, startIndex: startIndex, compute: true)
+            for row in fromRows {
+                for item in row.items {
+                    if (item.from.isInvented) {
+                        continue
+                    }
+                    if let cell = fromViewController.collectionView.cellForItem(at: item.from.indexPath!) as? FEPhotoCell{
+                        var frame = item.rect
+                        let centery = frame.midY + fromViewController.collectionView.contentOffset.y
+                        frame = CGRect.init(x: frame.origin.x,
+                                            y: centery - frame.height/2,
+                                            width: frame.width,
+                                            height: frame.height)
+                        var sectionFrame = CGRect.zero
+                        let sectionheader = fromViewController.collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: item.from.indexPath!)
+                        sectionFrame = sectionheader?.frame ?? CGRect.zero
+                        sectionFrame = CGRect.init(x: sectionFrame.origin.x,
+                                                   y: sectionFrame.origin.y,
+                                                   width: sectionFrame.width,
+                                                   height: 0)
+                        if (item.type == .fromAndTo) {
+//                            cell.alpha = 0
+                            if let toSectionheader = toViewController.collectionView.layoutAttributesForSupplementaryElement(ofKind: UICollectionView.elementKindSectionHeader, at: item.to.indexPath!) {
+                                sectionFrame = CGRect.init(x: 0,
+                                                           y: frame.minY - toSectionheader.frame.height,
+                                                           width: toSectionheader.frame.width,
+                                                           height: toSectionheader.frame.height)
+                            }
+                        } else {
+                            _ = sectionheader?.subviews.map({ (view) in
+                                view.isHidden = true
+                            })
+                        }
+                       
+                        UIView.animate(withDuration: self.animationDuration / 2,
+                                       delay: 0,
+                                       //                                       usingSpringWithDamping: 0.75,
+                            //                                       initialSpringVelocity: 0,
+                                                                  options: [.curveEaseOut, .allowUserInteraction, .beginFromCurrentState],
+                            animations: { () -> Void in
+                                sectionheader?.frame = sectionFrame
+                                sectionheader?.alpha = 0
+                                cell.alpha = 0
+                                cell.frame = frame
+                                cell.imageView.frame = CGRect.init(x: 0, y: 0, width: frame.width, height: frame.height)
+                                //                                            sectionheader?.alpha = 1
+                        },
+                            completion: { (b) in
+
+                        })
+                    }
+                }
+            }
+        }
+    }
+    
+    func mergeFromRowsToToRows(fromRows : [FEPhotoAnimatorRow]? ,toRows : [FEPhotoAnimatorRow]?,fromViewController : FEPhotoBaseCollectionController!, toViewController : FEPhotoBaseCollectionController!) -> (Int,Int,Int) {
+        return self.mergeToRowsToFromRows(fromRows: toRows, toRows: fromRows, fromViewController: toViewController, toViewController: fromViewController)
+    }
+    
+    func popAnimateInfromViewController(transitionContext: UIViewControllerContextTransitioning!,fromViewController : FEPhotoBaseCollectionController!, toViewController : FEPhotoBaseCollectionController!) {
+        
+        let fromRows = self.buildRows(viewController: fromViewController)
+
+        toViewController.collectionView.setNeedsLayout()
+        toViewController.collectionView.layoutIfNeeded()
+        // scroollToSelectedPhotoInDatas必须在DispatchQueue.main.async执行,要不contentoffset不准确
+        DispatchQueue.main.async {
+            toViewController.scroollToSelectedPhotoInDatas(pre: fromViewController)
+            //必须reloaddata,cell的位置才准确
+            toViewController.collectionView.reloadData{
+                let toRows = self.buildRows(viewController: toViewController, fill: true)
+                let (toRowIndex,fromRowIndex,startIndex) =  self.mergeFromRowsToToRows(fromRows: fromRows, toRows: toRows,fromViewController: fromViewController,toViewController: toViewController)
+               
+                self.doPopAnimateInToViewController(fromRows: fromRows, toRows: toRows, fromViewController: fromViewController, toViewController: toViewController, toRowIndex: toRowIndex)
+                
+                self.doPopAnimateInFromViewController(fromRows: fromRows, toRows: toRows, fromViewController: fromViewController, toViewController: toViewController, fromRowIndex: fromRowIndex, toRowIndex: toRowIndex, startIndex: startIndex)
+                
+                //        fromViewController.view.alpha = 0
+                //        fromViewController.view.isHidden = false
+                UIView.animate(withDuration: self.animationDuration,
+                               delay:0,
+                               animations: {
+                                fromViewController.view.alpha = 0
+                                //                        fromViewController.view.isHidden = true
+                }) { (b) in
+                    transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
+                }
+            }
+        }
+    }
+    
+    func popAnimate(using transitionContext: UIViewControllerContextTransitioning) {
+        let fromViewController = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.from)! as! FEPhotoBaseCollectionController
+        let toViewController = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.to)! as! FEPhotoBaseCollectionController
+        let container = transitionContext.containerView
+        container.backgroundColor = UIColor.clear
+        
+        toViewController.view.frame = transitionContext.finalFrame(for: toViewController)
+        container.insertSubview(toViewController.view, belowSubview: fromViewController.view)
+        
+        self.popAnimateInfromViewController(transitionContext: transitionContext, fromViewController: fromViewController, toViewController: toViewController)
     }
 }
