@@ -246,7 +246,7 @@ class FEPhotoCollectionViewAnimator: NSObject,UIViewControllerAnimatedTransition
                                     y: rect.minY - toSectionheader.height,
                                     width: toSectionheader.width,
                                     height: toSectionheader.height)
-                let centery = frame.midY + fromViewController.collectionView.contentOffset.y + FECommon.NavBarHeight
+                let centery = frame.midY + fromViewController.collectionView.contentOffset.y + fromViewController.collectionView.fe_contentInsert.top
                 frame = CGRect.init(x: frame.origin.x,
                                     y: centery - frame.height/2,
                                     width: frame.width,
@@ -259,7 +259,7 @@ class FEPhotoCollectionViewAnimator: NSObject,UIViewControllerAnimatedTransition
                                     y: rect.minY - fromSectionheader.height,
                                     width: fromSectionheader.width,
                                     height: fromSectionheader.height)
-                let centery = frame.midY + fromViewController.collectionView.contentOffset.y + FECommon.NavBarHeight
+                let centery = frame.midY + fromViewController.collectionView.contentOffset.y + fromViewController.collectionView.fe_contentInsert.top
                 frame = CGRect.init(x: frame.origin.x,
                                     y: centery - frame.height/2,
                                     width: frame.width,
@@ -269,11 +269,11 @@ class FEPhotoCollectionViewAnimator: NSObject,UIViewControllerAnimatedTransition
         if let fromSectionheader = fromViewController.collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: item.from.indexPath!) {
             if(!frame.isEmpty) {
                 // 判断是否吸附在顶部
-                let rect = fromSectionheader.convert(fromSectionheader.bounds, to: UIApplication.shared.keyWindow)
-                let temprect = CGRect.init(x: 0,
-                                           y: FECommon.NavBarHeight - fromSectionheader.frame.height,
-                                           width: fromSectionheader.frame.width,
-                                           height: fromSectionheader.frame.height)
+//                let rect = fromSectionheader.convert(fromSectionheader.bounds, to: UIApplication.shared.keyWindow)
+//                let temprect = CGRect.init(x: 0,
+//                                           y: fromViewController.collectionView.fe_contentInsert.top - fromSectionheader.frame.height,
+//                                           width: fromSectionheader.frame.width,
+//                                           height: fromSectionheader.frame.height)
 
                 UIView.animate(withDuration: self.animationDuration,
                                delay: 0,
@@ -281,7 +281,7 @@ class FEPhotoCollectionViewAnimator: NSObject,UIViewControllerAnimatedTransition
                                initialSpringVelocity: 0,
                                options: [.curveEaseOut, .allowUserInteraction, .beginFromCurrentState],
                                animations: { () -> Void in
-                                if (temprect.intersection(rect).height > 0) {
+                                if (fromViewController.collectionView.headerIsPinnedOrUnderContentInsetTop(section: item.from.indexPath!.section)) {
                                     fromSectionheader.alpha = 1
                                 }
                                 else {
@@ -313,7 +313,7 @@ class FEPhotoCollectionViewAnimator: NSObject,UIViewControllerAnimatedTransition
                     let saveSize = fromItem.frame.size
                     // torect是屏幕的位置,需要转到collection的cotentsize上
                     var frame = toRect[i]!
-                    let centery = frame.midY + fromViewController.collectionView.contentOffset.y + FECommon.NavBarHeight
+                    let centery = frame.midY + fromViewController.collectionView.contentOffset.y + fromViewController.collectionView.fe_contentInsert.top
                     frame = CGRect.init(x: frame.origin.x,
                                         y: centery - frame.height/2,
                                         width: frame.width,
@@ -372,7 +372,7 @@ class FEPhotoCollectionViewAnimator: NSObject,UIViewControllerAnimatedTransition
             
             let rect = toCell!.convert(toCell!.bounds, to: UIApplication.shared.keyWindow)
             //相对于屏幕的中心位置
-            let toCenter = CGPoint.init(x: rect.midX, y: rect.midY - FECommon.NavBarHeight)
+            let toCenter = CGPoint.init(x: rect.midX, y: rect.midY - toViewController.collectionView.fe_contentInsert.top)
             var x = toCenter.x - toSize.width * CGFloat(index)
             startx = x
             toRect = [index:CGRect.init(x: toCenter.x - toSize.width/2,
@@ -445,7 +445,7 @@ class FEPhotoCollectionViewAnimator: NSObject,UIViewControllerAnimatedTransition
                         let rect = sectionheader.convert(sectionheader.bounds, to: UIApplication.shared.keyWindow)
                         startFrame = rect
                         // 要减去startFrame.height,因为是悬浮的
-                        startFrame.origin.y = startFrame.origin.y - FECommon.NavBarHeight - startFrame.height
+                        startFrame.origin.y = startFrame.origin.y - toViewController.collectionView.fe_contentInsert.top - startFrame.height
                     }
                 }
                 else
@@ -453,14 +453,14 @@ class FEPhotoCollectionViewAnimator: NSObject,UIViewControllerAnimatedTransition
                     if let cell = toViewController.collectionView.cellForItem(at: tofirstItem.indexPath!) {
                         let rect = cell.convert(cell.bounds, to: UIApplication.shared.keyWindow)
                         startFrame = rect
-                        startFrame.origin.y = startFrame.origin.y - FECommon.NavBarHeight
+                        startFrame.origin.y = startFrame.origin.y - toViewController.collectionView.fe_contentInsert.top
                     }
                 }
                 var endFrame = CGRect.zero
                 if let cell = toViewController.collectionView.cellForItem(at: tolastItem.indexPath!) {
                     let rect = cell.convert(cell.bounds, to: UIApplication.shared.keyWindow)
                     endFrame = rect
-                    endFrame.origin.y = endFrame.origin.y - FECommon.NavBarHeight
+                    endFrame.origin.y = endFrame.origin.y - toViewController.collectionView.fe_contentInsert.top
                 }
                 if (startIndex >= 0) {
                     let toLayout = toViewController.collectionViewLayout as! UICollectionViewFlowLayout
@@ -569,7 +569,7 @@ class FEPhotoCollectionViewAnimator: NSObject,UIViewControllerAnimatedTransition
                     centerx = rect.midX
                 }
                 var tempCetnery = centery
-                var heads = [UICollectionReusableView]()
+                var heads = [IndexPath]()
                 while i >= 0 {
                     let toRow = toRows[i]
                     var orginx = CGFloat(startIndex) * fromSize.width
@@ -592,9 +592,9 @@ class FEPhotoCollectionViewAnimator: NSObject,UIViewControllerAnimatedTransition
                                 cell.frame = frame
                                 cell.alpha = 0
                                 cell.imageView.frame = CGRect.init(x: 0, y: 0, width: frame.width, height: frame.height)
-                                sectionheader?.alpha = 0
+//                                sectionheader?.alpha = 0
                                 if(sectionheader != nil) {
-                                    heads.append(sectionheader!)
+                                    heads.append(item.from.indexPath!)
                                 }
                                 UIView.animate(withDuration: self.animationDuration,
                                                delay: 0,
@@ -667,9 +667,9 @@ class FEPhotoCollectionViewAnimator: NSObject,UIViewControllerAnimatedTransition
                                 cell.frame = frame
                                 cell.alpha = 0
                                 cell.imageView.frame = CGRect.init(x: 0, y: 0, width: frame.width, height: frame.height)
-                                sectionheader?.alpha = 0
+//                                sectionheader?.alpha = 0
                                 if(sectionheader != nil) {
-                                    heads.append(sectionheader!)
+                                    heads.append(item.from.indexPath!)
                                 }
                                 UIView.animate(withDuration: self.animationDuration,
                                                delay: 0,
@@ -707,26 +707,29 @@ class FEPhotoCollectionViewAnimator: NSObject,UIViewControllerAnimatedTransition
                 }
                 if (!compute) {
                     //delay为了防止立即显示,会挡住cell的显示
-                    for h in heads {
+                    for indexPath in heads {
                         // 判断是否吸附在顶部
-                        let rect = h.convert(h.bounds, to: UIApplication.shared.keyWindow)
-                        let temprect = CGRect.init(x: 0,
-                                                   y: FECommon.NavBarHeight - h.frame.height,
-                                                   width: h.frame.width,
-                                                   height: h.frame.height)
-                        if (temprect.intersection(rect).height > 0) {
-                            h.alpha = 1
-                        } else {
-                            
+//                        let rect = h.convert(h.bounds, to: UIApplication.shared.keyWindow)
+//                        let temprect = CGRect.init(x: 0,
+//                                                   y: toViewController.collectionView.fe_contentInsert.top - h.frame.height,
+//                                                   width: h.frame.width,
+//                                                   height: h.frame.height)
+                        if let header = toViewController.collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: indexPath)
+                        {
+                            if (toViewController.collectionView.headerIsPinnedOrUnderContentInsetTop(section: indexPath.section)) {
+                                header.alpha = 1
+                            } else {
+                                header.alpha = 0
+                            }
+                            UIView.animate(withDuration: self.animationDuration,
+                                           delay: self.animationDuration / 4,
+                                           animations: { () -> Void in
+                                            header.alpha = 1
+                            },
+                                           completion: { (b) in
+                                            
+                            })
                         }
-                        UIView.animate(withDuration: self.animationDuration,
-                                       delay: self.animationDuration / 4,
-                                       animations: { () -> Void in
-                                        h.alpha = 1
-                        },
-                                       completion: { (b) in
-                                        
-                        })
                     }
                 }
             }
@@ -805,7 +808,7 @@ extension FEPhotoCollectionViewAnimator {
                     if let cell = toViewController.collectionView.cellForItem(at: item.from.indexPath!) as? FEPhotoCell{
                         let saveFrame = cell.frame
                         var frame = item.rect
-                        let centery = frame.midY + toViewController.collectionView.contentOffset.y + FECommon.NavBarHeight
+                        let centery = frame.midY + toViewController.collectionView.contentOffset.y + toViewController.collectionView.fe_contentInsert.top
                         frame = CGRect.init(x: frame.origin.x,
                                             y: centery - frame.height/2,
                                             width: frame.width,

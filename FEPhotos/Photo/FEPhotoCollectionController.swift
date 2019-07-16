@@ -14,9 +14,15 @@ class FEPhotoCollectionController: FEPhotoBaseCollectionController,UICollectionV
     func animatorType() -> FEAnimatorType {
         return .spread
     }
-    
+    var isDidAppear = false
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(selectedPhotoChanged(_:)),
+        name: NSNotification.Name(rawValue: "selectedPhotoChanged"),
+        object: nil)
+        
         self.collectionView.backgroundColor = UIColor.white
         let width = self.collectionView.frame.width / CGFloat(self.controllerType.itemCount())
 
@@ -36,14 +42,46 @@ class FEPhotoCollectionController: FEPhotoBaseCollectionController,UICollectionV
         self.collectionView.register(UINib.init(nibName: "FEPhotoSectionHeaderView", bundle: nil), forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "FEPhotoSectionHeaderView")
         self.contentFrame = self.collectionView.frame
         
-//        self.collectionView.setNeedsLayout()
-//        self.collectionView.layoutIfNeeded()
-//        DispatchQueue.main.async {
-//            self.scroollToSelectedPhotoInDatas()
-//        }
-//        self.collectionView.reloadData(){
-//        self.scroollToSelectedPhotoInDatas()
-//        }
+//        let backItem = UIBarButtonItem.init(title: "", style: .done, target: self, action: #selector(back))
+//        self.navigationItem.backBarButtonItem = backItem
+
+        if (self.navigationController?.viewControllers.count ?? 0 > 1) {
+            let backToRootVCButton = UIBarButtonItem.init(title: "返回", style: UIBarButtonItem.Style.plain, target: self, action: #selector(back))
+            self.navigationItem.setLeftBarButton(backToRootVCButton, animated: true)
+        }
+//        self.navigationItem.leftItemsSupplementBackButton = true
+    }
+    
+    @objc private func back() {
+        let (row,section) = self.findSelectedPhotoInDatas() ?? (-1 , -1)
+        if (row >= 0) {
+            let indexPath = IndexPath.init(row: row, section: section)
+            let cell = self.collectionView.cellForItem(at: indexPath)
+            if cell == nil {
+                //没有找到,重新设置selecteddata,取屏幕中间的数据
+                let indexPathsForVisibleCells = self.collectionView.indexPathsForVisibleItems
+                let indexPaths = indexPathsForVisibleCells.sorted(by: { (a,b) -> Bool in
+                    return a.compare(b) == .orderedAscending
+                })
+                if (indexPaths.count > 0) {
+                    let index = indexPaths.count / 2
+                    let indexPath = indexPaths[index]
+                    let sectionData = self.datas[indexPath.section]
+                    let photoData = sectionData.photos[indexPath.row]
+                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: "selectedPhotoChanged"),
+                                                    object: photoData)
+                }
+            } else {
+                
+            }
+        }
+
+        self.navigationController?.popViewController(animated: true)
+    }
+    
+    @objc private func selectedPhotoChanged(_ noti: Notification) {
+        let data = noti.object as! FEPhotoCellData
+        self.selectedPhoto = data
     }
     
     override func scrollViewDidChangeAdjustedContentInset(_ scrollView: UIScrollView) {
@@ -51,6 +89,12 @@ class FEPhotoCollectionController: FEPhotoBaseCollectionController,UICollectionV
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        self.isDidAppear = true
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        self.isDidAppear = false
     }
     /*
     // MARK: - Navigation
@@ -63,41 +107,29 @@ class FEPhotoCollectionController: FEPhotoBaseCollectionController,UICollectionV
     */
     // MARK: UICollectionViewDataSource
     
-    func checkHeaderViewBlur(header : FEPhotoSectionHeaderView!) {
-        // 判断是否吸附在顶部
-        let rect = header.convert(header.bounds, to: UIApplication.shared.keyWindow)
-        let temprect = CGRect.init(x: 0,
-                                   y: FECommon.NavBarHeight - header.frame.height,
-                                   width: header.frame.width,
-                                   height: header.frame.height)
-        
-//        let a = UIView.init(frame: rect)
-//        a.backgroundColor = UIColor.red
-//        let b = UIView.init(frame: temprect)
-//        b.backgroundColor = UIColor.yellow
-//        b.alpha = 0.5
-//        a.alpha = 0.5
-//        UIApplication.shared.keyWindow?.addSubview(a)
-//        UIApplication.shared.keyWindow?.addSubview(b)
-//        UIView.animate(withDuration: 1, delay: 0, animations: {
-//
-//        }) { (c) in
-//            a.removeFromSuperview()
-//            b.removeFromSuperview()
-//        }
-        
-//        print(rect)
-        if (temprect.intersection(rect).height > 0) {
-            header.isBlur = true
-        } else {
-            header.isBlur = false
+    func checkHeaderViewBlur(indexPath : IndexPath) {
+        UIView.animate(withDuration: 0, delay: 0, animations: {
+            
+        }) { [weak self](b) in
+            //不能直接collectionView.supplementaryView,刚进界面的时候会没有值,这里用UIView.animate
+            if let header = self?.collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: indexPath) as? FEPhotoSectionHeaderView {
+                if (self?.collectionView.headerIsPinnedOrUnderContentInsetTop(section: indexPath.section) ?? false) {
+                    header.isBlur = true
+                } else {
+                    header.isBlur = false
+                }
+            }
         }
     }
     
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        for header in self.collectionView?.visibleSupplementaryViews(ofKind: UICollectionView.elementKindSectionHeader) ?? [] {
-            let h = header as! FEPhotoSectionHeaderView
-            self.checkHeaderViewBlur(header: h)
+        if (self != self.navigationController?.viewControllers.last){
+            return
+        }
+        if (self.isDidAppear) {
+            for indexPath in self.collectionView?.indexPathsForVisibleSupplementaryElements(ofKind: UICollectionView.elementKindSectionHeader) ?? [] {
+                self.checkHeaderViewBlur(indexPath: indexPath)
+            }
         }
     }
 
@@ -105,6 +137,28 @@ class FEPhotoCollectionController: FEPhotoBaseCollectionController,UICollectionV
         // #warning Incomplete implementation, return the number of sections
         return self.datas.count
     }
+    
+//    override func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+//        let sectionData = self.datas[indexPath.section]
+//        let photoData = sectionData.photos[indexPath.row]
+//        if (photoData.id == self.selectedPhoto?.id && self.isDidAppear) {
+//            //没有找到,重新设置selecteddata,取屏幕中间的数据
+//            let indexPathsForVisibleCells = self.collectionView.indexPathsForVisibleItems
+//            let indexPaths = indexPathsForVisibleCells.sorted(by: { (a,b) -> Bool in
+//                return a.compare(b) == .orderedAscending
+//            })
+//            if (indexPaths.count > 0) {
+//                let index = indexPaths.count / 2
+//                let indexPath1 = indexPaths[index]
+//                let sectionData1 = self.datas[indexPath1.section]
+//                let photoData1 = sectionData1.photos[indexPath1.row]
+//                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "selectedPhotoChanged"),
+//                                                object: photoData1)
+//            }
+//        } else {
+//
+//        }
+//    }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         let sectionData = self.datas[section]
@@ -136,7 +190,7 @@ class FEPhotoCollectionController: FEPhotoBaseCollectionController,UICollectionV
             let header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "FEPhotoSectionHeaderView", for: indexPath) as! FEPhotoSectionHeaderView
             let sectionData = self.datas[indexPath.section]
             header.data = sectionData
-            self.checkHeaderViewBlur(header: header)
+            self.checkHeaderViewBlur(indexPath: indexPath)
             return header
         }
         return UICollectionReusableView()
@@ -150,17 +204,6 @@ class FEPhotoCollectionController: FEPhotoBaseCollectionController,UICollectionV
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let sectionData = self.datas[indexPath.section]
         let photoData = sectionData.photos[indexPath.row]
-//        
-//        let cell = collectionView.cellForItem(at: indexPath)
-//        //相对于window的位置
-//        let rect = cell?.convert(cell!.bounds, to: UIApplication.shared.keyWindow)
-//        let center = CGPoint.init(x: rect!.midX, y: rect!.midY)
-        
-//        let view = UIView()
-//        view.backgroundColor = UIColor.red
-//        view.frame = CGRect.init(x: 0, y: 0, width: 10, height: 10)
-//        view.center = CGPoint.init(x: center.x, y: center.y - FECommon.NavBarHeight)//center
-//        self.collectionView.addSubview(view)
         
         self.selectedPhoto = photoData
         let con = FEPhotoCollectionController.init(nibName: "FEPhotoCollectionController", bundle: nil)
@@ -169,6 +212,8 @@ class FEPhotoCollectionController: FEPhotoBaseCollectionController,UICollectionV
         con.photos = self.photos
         con.selectedPhoto = photoData
         self.navigationController?.pushViewController(con, animated: true)
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "selectedPhotoChanged"),
+                                        object: photoData)
     }
     
 //    open func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize

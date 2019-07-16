@@ -33,9 +33,8 @@ extension UICollectionView {
     func headerIsPinnedOrUnderContentInsetTop(section : Int) -> Bool{
         if let sectioheaderAttributes = self.layoutAttributesForSupplementaryElement(ofKind: UICollectionView.elementKindSectionHeader, at: IndexPath.init(row: 0, section: section)){
             let rectForSection = self.rectForSection(section: section)
-            let isSectionScrollIntoContentInsetTop = self.contentOffset.y + self.fe_contentInsert.top > rectForSection.minY // 表示这个 section 已经往上滚动，超过 contentInset.top 那条线了
-            let isSectionStayInContentInsetTop = self.contentOffset.y + self.fe_contentInsert.top <= rectForSection.maxY - sectioheaderAttributes.frame.height // 表示这个 section 还没被完全滚走
-            return isSectionScrollIntoContentInsetTop || isSectionStayInContentInsetTop
+            let isSectionScrollIntoContentInsetTop = self.contentOffset.y + self.fe_contentInsert.top <= rectForSection.maxY && self.contentOffset.y + self.fe_contentInsert.top >= rectForSection.minY - sectioheaderAttributes.frame.height
+            return isSectionScrollIntoContentInsetTop
         }
         return false
     }

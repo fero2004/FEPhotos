@@ -60,10 +60,10 @@ class FEPhotoBaseCollectionController: UICollectionViewController {
             
             var offsety = center.y - self.collectionView.frame.height
                 + self.contentFrame.size.height - touchCellCenter.y
-            var maxOffset = self.collectionView.contentSize.height - self.contentFrame.size.height + FECommon.NavBarHeight
+            var maxOffset = self.collectionView.contentSize.height - self.contentFrame.size.height + self.collectionView.fe_contentInsert.top
             
-            if (maxOffset <= -FECommon.NavBarHeight) {
-                maxOffset = -FECommon.NavBarHeight
+            if (maxOffset <= -self.collectionView.fe_contentInsert.top) {
+                maxOffset = -self.collectionView.fe_contentInsert.top
             }
             
 //            if let sectioheaderAttributes = self.collectionView.layoutAttributesForSupplementaryElement(ofKind: UICollectionView.elementKindSectionHeader, at: IndexPath.init(row: 0, section: section)){
@@ -81,7 +81,6 @@ class FEPhotoBaseCollectionController: UICollectionViewController {
 ////                    print(111)
 ////                }
 //            }
-            
             //计算sectioheader是否有挡住cell
             //相当于屏幕计算
             let sectioheaderAttributes = self.collectionView.layoutAttributesForSupplementaryElement(ofKind: UICollectionView.elementKindSectionHeader, at: IndexPath.init(row: row, section: section))
@@ -89,7 +88,7 @@ class FEPhotoBaseCollectionController: UICollectionViewController {
             let screenSectioheaderAttributes = CGRect.init(x: 0, y: 0, width: sectioheaderAttributes!.frame.width, height: sectioheaderAttributes!.frame.height)
             //计算cell相当于屏幕的大小位置
             let screenCellRect = CGRect.init(x: touchCellCenter.x - cellLayoutAttributes!.frame.width/2,
-                                         y: touchCellCenter.y - FECommon.NavBarHeight - cellLayoutAttributes!.frame.height/2,
+                                         y: touchCellCenter.y - self.collectionView.fe_contentInsert.top - cellLayoutAttributes!.frame.height/2,
                                          width: cellLayoutAttributes!.frame.width,
                                          height: cellLayoutAttributes!.frame.height)
             if(screenCellRect.intersects(screenSectioheaderAttributes)){
@@ -97,8 +96,8 @@ class FEPhotoBaseCollectionController: UICollectionViewController {
                 offsety = offsety - temprect.height
             }
             
-            if (offsety <= -FECommon.NavBarHeight) {
-                offsety = -FECommon.NavBarHeight
+            if (offsety <= -self.collectionView.fe_contentInsert.top) {
+                offsety = -self.collectionView.fe_contentInsert.top
             }
             else if (offsety >= maxOffset) {
                 offsety = maxOffset

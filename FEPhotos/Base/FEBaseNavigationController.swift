@@ -12,10 +12,12 @@ class FEBaseNavigationController: UINavigationController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         // Do any additional setup after loading the view.
     }
     
+//    override func popViewController(animated: Bool) -> UIViewController? {
+//        return super.popViewController(animated: animated)
+//    }
 
     /*
     // MARK: - Navigation
