@@ -15,6 +15,7 @@ class FEPhotoCollectionController: FEPhotoBaseCollectionController,UICollectionV
         return .spread
     }
     var isDidAppear = false
+    var longPressImageView : UIImageView? //长按出现的iamgeview
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -49,7 +50,35 @@ class FEPhotoCollectionController: FEPhotoBaseCollectionController,UICollectionV
             let backToRootVCButton = UIBarButtonItem.init(title: "返回", style: UIBarButtonItem.Style.plain, target: self, action: #selector(back))
             self.navigationItem.setLeftBarButton(backToRootVCButton, animated: true)
         }
+//        self.collectionView.canCancelContentTouches = false
+//        self.collectionView.isMultipleTouchEnabled = false
 //        self.navigationItem.leftItemsSupplementBackButton = true
+        
+        let lonpress = UILongPressGestureRecognizer(target: self, action: #selector(longPress))
+        lonpress.minimumPressDuration = 0.5
+        lonpress.delaysTouchesBegan = true
+        self.view.addGestureRecognizer(lonpress)
+    }
+    
+    @objc func longPress(gesture: UILongPressGestureRecognizer)  {
+        self.longPressImageView?.removeFromSuperview()
+        self.longPressImageView = nil
+        if (gesture.state == .ended || gesture.state == .cancelled) {
+            return
+        }
+        let location = gesture.location(in: self.collectionView)
+        print(location)
+        if let indexPath = self.collectionView.indexPathForItem(at: location) {
+            let sectionData = self.datas[indexPath.section]
+            let photoData = sectionData.photos[indexPath.row]
+
+            self.longPressImageView = UIImageView.init(frame: CGRect.init(x: 0, y: 0, width: 65, height: 65))
+            self.longPressImageView?.center = CGPoint.init(x: location.x, y: location.y - self.collectionView.contentOffset.y - 55)
+            self.longPressImageView?.image = photoData.bigImage
+            self.longPressImageView?.contentMode = .scaleAspectFill
+            self.longPressImageView?.clipsToBounds = true
+            UIApplication.shared.keyWindow?.addSubview(self.longPressImageView!)
+        }
     }
     
     @objc private func back() {
