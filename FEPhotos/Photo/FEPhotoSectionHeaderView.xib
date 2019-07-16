@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14810.11" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14766.13"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -13,21 +14,39 @@
             <rect key="frame" x="0.0" y="0.0" width="320" height="50"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wbX-t2-S9u">
-                    <rect key="frame" x="16" y="9" width="42" height="21"/>
-                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wbX-t2-S9u">
+                    <rect key="frame" x="16" y="10" width="40.5" height="19.5"/>
+                    <fontDescription key="fontDescription" type="system" weight="medium" pointSize="16"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="a60-be-HAl">
+                    <rect key="frame" x="16" y="31" width="33" height="16"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                    <color key="textColor" red="0.55698192119598389" green="0.55654913187026978" blue="0.57255160808563232" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jzQ-iG-CyL">
+                    <rect key="frame" x="16" y="16.5" width="36" height="17"/>
+                    <fontDescription key="fontDescription" type="system" weight="medium" pointSize="14"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
             </subviews>
-            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <color key="backgroundColor" white="1" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
-                <constraint firstItem="wbX-t2-S9u" firstAttribute="top" secondItem="cSt-SH-ykK" secondAttribute="top" constant="9" id="Tiw-Sp-iHY"/>
+                <constraint firstItem="jzQ-iG-CyL" firstAttribute="centerY" secondItem="cSt-SH-ykK" secondAttribute="centerY" id="8oh-pB-bL2"/>
+                <constraint firstItem="jzQ-iG-CyL" firstAttribute="leading" secondItem="cSt-SH-ykK" secondAttribute="leading" constant="16" id="HZL-sL-WBQ"/>
+                <constraint firstItem="a60-be-HAl" firstAttribute="leading" secondItem="cSt-SH-ykK" secondAttribute="leading" constant="16" id="JlP-V2-KjG"/>
+                <constraint firstItem="a60-be-HAl" firstAttribute="top" secondItem="wbX-t2-S9u" secondAttribute="bottom" constant="1.5" id="TTa-gS-WKh"/>
+                <constraint firstItem="wbX-t2-S9u" firstAttribute="top" secondItem="cSt-SH-ykK" secondAttribute="top" constant="10" id="Tiw-Sp-iHY"/>
                 <constraint firstItem="wbX-t2-S9u" firstAttribute="leading" secondItem="cSt-SH-ykK" secondAttribute="leading" constant="16" id="xEJ-Pb-tvq"/>
             </constraints>
             <viewLayoutGuide key="safeArea" id="gSG-nv-Jsf"/>
             <connections>
+                <outlet property="subTitleLabel" destination="a60-be-HAl" id="9Ms-5o-q2W"/>
                 <outlet property="titleLabel" destination="wbX-t2-S9u" id="AZV-rF-C10"/>
+                <outlet property="titleLabel0" destination="jzQ-iG-CyL" id="ro3-hf-oeU"/>
             </connections>
             <point key="canvasLocation" x="52" y="-28"/>
         </collectionReusableView>

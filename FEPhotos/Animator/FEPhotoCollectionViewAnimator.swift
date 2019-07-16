@@ -41,7 +41,7 @@ class FEPhotoAnimatorRow : NSObject {
 }
 
 class FEPhotoCollectionViewAnimator: NSObject,UIViewControllerAnimatedTransitioning, UIViewControllerTransitioningDelegate {
-    var animationDuration: Double! = 0.7
+    var animationDuration: Double! = 0.5
     var operation : UINavigationController.Operation = UINavigationController.Operation.push
     
     init(operation : UINavigationController.Operation!) {
@@ -273,7 +273,7 @@ class FEPhotoCollectionViewAnimator: NSObject,UIViewControllerAnimatedTransition
                 let temprect = CGRect.init(x: 0,
                                            y: FECommon.NavBarHeight - fromSectionheader.frame.height,
                                            width: fromSectionheader.frame.width,
-                                           height: fromSectionheader.frame.height * 2)
+                                           height: fromSectionheader.frame.height)
 
                 UIView.animate(withDuration: self.animationDuration,
                                delay: 0,
@@ -282,6 +282,7 @@ class FEPhotoCollectionViewAnimator: NSObject,UIViewControllerAnimatedTransition
                                options: [.curveEaseOut, .allowUserInteraction, .beginFromCurrentState],
                                animations: { () -> Void in
                                 if (temprect.intersection(rect).height > 0) {
+                                    fromSectionheader.alpha = 1
                                 }
                                 else {
                                     fromSectionheader.alpha = 0
@@ -712,7 +713,7 @@ class FEPhotoCollectionViewAnimator: NSObject,UIViewControllerAnimatedTransition
                         let temprect = CGRect.init(x: 0,
                                                    y: FECommon.NavBarHeight - h.frame.height,
                                                    width: h.frame.width,
-                                                   height: h.frame.height * 2)
+                                                   height: h.frame.height)
                         if (temprect.intersection(rect).height > 0) {
                             h.alpha = 1
                         } else {
@@ -853,6 +854,7 @@ extension FEPhotoCollectionViewAnimator {
         }
     }
     
+    //这里可以优化,动画应该在from上面做一个两个image渐变的效果,现在效果勉强可以 todo
     func doPopAnimateInFromViewController(fromRows : [FEPhotoAnimatorRow]? ,toRows : [FEPhotoAnimatorRow]?,fromViewController : FEPhotoBaseCollectionController!, toViewController : FEPhotoBaseCollectionController!,fromRowIndex : Int!, toRowIndex : Int!, startIndex: Int!) {
         if let toRows = toRows, let fromRows = fromRows {
             self.doPushAnimateInToViewController(fromRows: toRows, toRows: fromRows, fromViewController: toViewController, toViewController: fromViewController, fromRowIndex: toRowIndex, toRowIndex: fromRowIndex, startIndex: startIndex, compute: true)

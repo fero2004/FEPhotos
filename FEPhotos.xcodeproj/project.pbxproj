@@ -29,6 +29,7 @@
 		1914E98422BB5C4A00C5E6B4 /* FENavigationControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1914E98322BB5C4A00C5E6B4 /* FENavigationControllerDelegate.swift */; };
 		19154AC122BA781400FF3067 /* FEPhotoCollectionViewAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19154AC022BA781400FF3067 /* FEPhotoCollectionViewAnimator.swift */; };
 		19154AC322BA816200FF3067 /* FEPhotoBaseCollectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19154AC222BA816200FF3067 /* FEPhotoBaseCollectionController.swift */; };
+		19178A9322DD70AA00DAD2EA /* FEExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19178A9222DD70AA00DAD2EA /* FEExtension.swift */; };
 		1918A12122BA233A00F1E4DE /* small_17.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1918A08722BA233900F1E4DE /* small_17.jpg */; };
 		1918A12222BA233A00F1E4DE /* small_140.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1918A08822BA233900F1E4DE /* small_140.jpg */; };
 		1918A12322BA233A00F1E4DE /* small_154.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1918A08922BA233900F1E4DE /* small_154.jpg */; };
@@ -387,6 +388,7 @@
 		1914E98322BB5C4A00C5E6B4 /* FENavigationControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FENavigationControllerDelegate.swift; sourceTree = "<group>"; };
 		19154AC022BA781400FF3067 /* FEPhotoCollectionViewAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FEPhotoCollectionViewAnimator.swift; sourceTree = "<group>"; };
 		19154AC222BA816200FF3067 /* FEPhotoBaseCollectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FEPhotoBaseCollectionController.swift; sourceTree = "<group>"; };
+		19178A9222DD70AA00DAD2EA /* FEExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FEExtension.swift; sourceTree = "<group>"; };
 		1918A08722BA233900F1E4DE /* small_17.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = small_17.jpg; sourceTree = "<group>"; };
 		1918A08822BA233900F1E4DE /* small_140.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = small_140.jpg; sourceTree = "<group>"; };
 		1918A08922BA233900F1E4DE /* small_154.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = small_154.jpg; sourceTree = "<group>"; };
@@ -834,6 +836,7 @@
 			children = (
 				1914E98122BB5A1800C5E6B4 /* FEAnimatorDelegate.swift */,
 				19154AC022BA781400FF3067 /* FEPhotoCollectionViewAnimator.swift */,
+				19178A9222DD70AA00DAD2EA /* FEExtension.swift */,
 			);
 			path = Animator;
 			sourceTree = "<group>";
@@ -1667,6 +1670,7 @@
 				19154AC322BA816200FF3067 /* FEPhotoBaseCollectionController.swift in Sources */,
 				1914E98422BB5C4A00C5E6B4 /* FENavigationControllerDelegate.swift in Sources */,
 				190EE53822B6121E00E2A47E /* FEPhotoCell.swift in Sources */,
+				19178A9322DD70AA00DAD2EA /* FEExtension.swift in Sources */,
 				190EE4FD22B5FFE800E2A47E /* ViewController.swift in Sources */,
 				190E389622B77F380091E8A3 /* FEPhotoCellData.swift in Sources */,
 				190EE4F922B5FFE800E2A47E /* AppDelegate.swift in Sources */,

@@ -62,6 +62,44 @@ class FEPhotoCollectionController: FEPhotoBaseCollectionController,UICollectionV
     }
     */
     // MARK: UICollectionViewDataSource
+    
+    func checkHeaderViewBlur(header : FEPhotoSectionHeaderView!) {
+        // 判断是否吸附在顶部
+        let rect = header.convert(header.bounds, to: UIApplication.shared.keyWindow)
+        let temprect = CGRect.init(x: 0,
+                                   y: FECommon.NavBarHeight - header.frame.height,
+                                   width: header.frame.width,
+                                   height: header.frame.height)
+        
+//        let a = UIView.init(frame: rect)
+//        a.backgroundColor = UIColor.red
+//        let b = UIView.init(frame: temprect)
+//        b.backgroundColor = UIColor.yellow
+//        b.alpha = 0.5
+//        a.alpha = 0.5
+//        UIApplication.shared.keyWindow?.addSubview(a)
+//        UIApplication.shared.keyWindow?.addSubview(b)
+//        UIView.animate(withDuration: 1, delay: 0, animations: {
+//
+//        }) { (c) in
+//            a.removeFromSuperview()
+//            b.removeFromSuperview()
+//        }
+        
+//        print(rect)
+        if (temprect.intersection(rect).height > 0) {
+            header.isBlur = true
+        } else {
+            header.isBlur = false
+        }
+    }
+    
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        for header in self.collectionView?.visibleSupplementaryViews(ofKind: UICollectionView.elementKindSectionHeader) ?? [] {
+            let h = header as! FEPhotoSectionHeaderView
+            self.checkHeaderViewBlur(header: h)
+        }
+    }
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         // #warning Incomplete implementation, return the number of sections
@@ -96,14 +134,17 @@ class FEPhotoCollectionController: FEPhotoBaseCollectionController,UICollectionV
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         if (kind == UICollectionView.elementKindSectionHeader) {
             let header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "FEPhotoSectionHeaderView", for: indexPath) as! FEPhotoSectionHeaderView
-            header.titleLabel.text = String.init(format: "%d", indexPath.section)
+            let sectionData = self.datas[indexPath.section]
+            header.data = sectionData
+            self.checkHeaderViewBlur(header: header)
             return header
         }
         return UICollectionReusableView()
     }
     
     open func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize{
-        return CGSize(width: collectionView.frame.width, height: 60)
+        let sectionData = self.datas[section]
+        return CGSize(width: collectionView.frame.width, height: sectionData.height)
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {

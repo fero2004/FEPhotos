@@ -12,6 +12,20 @@ class FEPhotoSectionData: NSObject {
     var title : String?
     var subTitle : String?
     var photos = [FEPhotoCellData]()
+    
+    var height : CGFloat! {
+        get {
+            if let t = self.title, let s = self.subTitle {
+                if(t.count > 0 && s.count > 0) {
+                    return 60.0
+                } else {
+                    return 30.0
+                }
+            } else {
+                return 30.0
+            }
+        }
+    }
     //判断photo是否在photos内
     func isPhotoInphotos(photo : FEPhotoCellData!) -> Bool {
         if let a = photos.first, let b = photos.last {
