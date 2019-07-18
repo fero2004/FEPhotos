@@ -26,14 +26,5 @@ class FENavigationControllerDelegate: NSObject, UINavigationControllerDelegate{
             }
         }
         return nil
-//        let animator = CKWaveCollectionViewAnimator()
-//        animator.animationDuration = 0.7
-//
-//        if operation != UINavigationControllerOperation.push {
-//
-//            animator.reversed = true
-//        }
-//
-//        return animator
     }
 }
