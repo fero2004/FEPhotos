@@ -25,6 +25,11 @@
 		190EE53522B600AE00E2A47E /* FEPhotoSectionHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 190EE53322B600AE00E2A47E /* FEPhotoSectionHeaderView.xib */; };
 		190EE53822B6121E00E2A47E /* FEPhotoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 190EE53622B6121E00E2A47E /* FEPhotoCell.swift */; };
 		190EE53922B6121E00E2A47E /* FEPhotoCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 190EE53722B6121E00E2A47E /* FEPhotoCell.xib */; };
+		1911EF3A22E0B2B90053E140 /* FEPhotoOverViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1911EF3922E0B2B90053E140 /* FEPhotoOverViewCell.swift */; };
+		1913174A22E58E7400072D00 /* FEphotoOverviewThumbnailViewFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1913174922E58E7400072D00 /* FEphotoOverviewThumbnailViewFlowLayout.swift */; };
+		1913DB0F22E1F6D50096A7F1 /* PhotoOverviewThumbnailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1913DB0E22E1F6D50096A7F1 /* PhotoOverviewThumbnailView.swift */; };
+		1913DB1122E1F9240096A7F1 /* PhotoOverviewToolBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1913DB1022E1F9240096A7F1 /* PhotoOverviewToolBar.swift */; };
+		1913DB1422E2184F0096A7F1 /* PhotoOverviewThumbnailCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1913DB1322E2184F0096A7F1 /* PhotoOverviewThumbnailCell.swift */; };
 		1914E98222BB5A1800C5E6B4 /* FEAnimatorDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1914E98122BB5A1800C5E6B4 /* FEAnimatorDelegate.swift */; };
 		1914E98422BB5C4A00C5E6B4 /* FENavigationControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1914E98322BB5C4A00C5E6B4 /* FENavigationControllerDelegate.swift */; };
 		19154AC122BA781400FF3067 /* FEPhotoCollectionViewAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19154AC022BA781400FF3067 /* FEPhotoCollectionViewAnimator.swift */; };
@@ -339,6 +344,9 @@
 		1918A2EE22BA239600F1E4DE /* 52.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1918A25422BA239600F1E4DE /* 52.jpg */; };
 		1918A2EF22BA239600F1E4DE /* 46.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1918A25522BA239600F1E4DE /* 46.jpg */; };
 		191FAD4022B92E87002B0E47 /* FEPhotoSectionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 191FAD3F22B92E87002B0E47 /* FEPhotoSectionData.swift */; };
+		192942C122E06930000BB083 /* FEPhotoOverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192942BF22E06930000BB083 /* FEPhotoOverViewController.swift */; };
+		192942C222E06930000BB083 /* FEPhotoOverViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 192942C022E06930000BB083 /* FEPhotoOverViewController.xib */; };
+		192942C422E0698D000BB083 /* FEPhotoOverviewAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192942C322E0698D000BB083 /* FEPhotoOverviewAnimator.swift */; };
 		2F8F69241A480B2C35901196 /* Pods_FEPhotos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8609AEE3EFFF08606E3123F8 /* Pods_FEPhotos.framework */; };
 /* End PBXBuildFile section */
 
@@ -384,6 +392,11 @@
 		190EE53322B600AE00E2A47E /* FEPhotoSectionHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FEPhotoSectionHeaderView.xib; sourceTree = "<group>"; };
 		190EE53622B6121E00E2A47E /* FEPhotoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FEPhotoCell.swift; sourceTree = "<group>"; };
 		190EE53722B6121E00E2A47E /* FEPhotoCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FEPhotoCell.xib; sourceTree = "<group>"; };
+		1911EF3922E0B2B90053E140 /* FEPhotoOverViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FEPhotoOverViewCell.swift; sourceTree = "<group>"; };
+		1913174922E58E7400072D00 /* FEphotoOverviewThumbnailViewFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FEphotoOverviewThumbnailViewFlowLayout.swift; sourceTree = "<group>"; };
+		1913DB0E22E1F6D50096A7F1 /* PhotoOverviewThumbnailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoOverviewThumbnailView.swift; sourceTree = "<group>"; };
+		1913DB1022E1F9240096A7F1 /* PhotoOverviewToolBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoOverviewToolBar.swift; sourceTree = "<group>"; };
+		1913DB1322E2184F0096A7F1 /* PhotoOverviewThumbnailCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoOverviewThumbnailCell.swift; sourceTree = "<group>"; };
 		1914E98122BB5A1800C5E6B4 /* FEAnimatorDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FEAnimatorDelegate.swift; sourceTree = "<group>"; };
 		1914E98322BB5C4A00C5E6B4 /* FENavigationControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FENavigationControllerDelegate.swift; sourceTree = "<group>"; };
 		19154AC022BA781400FF3067 /* FEPhotoCollectionViewAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FEPhotoCollectionViewAnimator.swift; sourceTree = "<group>"; };
@@ -698,6 +711,9 @@
 		1918A25422BA239600F1E4DE /* 52.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 52.jpg; sourceTree = "<group>"; };
 		1918A25522BA239600F1E4DE /* 46.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 46.jpg; sourceTree = "<group>"; };
 		191FAD3F22B92E87002B0E47 /* FEPhotoSectionData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FEPhotoSectionData.swift; sourceTree = "<group>"; };
+		192942BF22E06930000BB083 /* FEPhotoOverViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FEPhotoOverViewController.swift; sourceTree = "<group>"; };
+		192942C022E06930000BB083 /* FEPhotoOverViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FEPhotoOverViewController.xib; sourceTree = "<group>"; };
+		192942C322E0698D000BB083 /* FEPhotoOverviewAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FEPhotoOverviewAnimator.swift; sourceTree = "<group>"; };
 		32B352F98768CA28A6217B90 /* Pods-FEPhotos.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FEPhotos.debug.xcconfig"; path = "Target Support Files/Pods-FEPhotos/Pods-FEPhotos.debug.xcconfig"; sourceTree = "<group>"; };
 		8609AEE3EFFF08606E3123F8 /* Pods_FEPhotos.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FEPhotos.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		928A48C0D9758CCE5ABE5404 /* Pods-FEPhotos.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FEPhotos.release.xcconfig"; path = "Target Support Files/Pods-FEPhotos/Pods-FEPhotos.release.xcconfig"; sourceTree = "<group>"; };
@@ -772,6 +788,7 @@
 		190EE4F722B5FFE800E2A47E /* FEPhotos */ = {
 			isa = PBXGroup;
 			children = (
+				192942BE22E068CA000BB083 /* PhotoOverview */,
 				190E389722B7CC2B0091E8A3 /* Images */,
 				19154ABF22BA77FC00FF3067 /* Animator */,
 				190E389422B77EB20091E8A3 /* Data */,
@@ -837,6 +854,7 @@
 				1914E98122BB5A1800C5E6B4 /* FEAnimatorDelegate.swift */,
 				19154AC022BA781400FF3067 /* FEPhotoCollectionViewAnimator.swift */,
 				19178A9222DD70AA00DAD2EA /* FEExtension.swift */,
+				192942C322E0698D000BB083 /* FEPhotoOverviewAnimator.swift */,
 			);
 			path = Animator;
 			sourceTree = "<group>";
@@ -1163,6 +1181,20 @@
 			path = big;
 			sourceTree = "<group>";
 		};
+		192942BE22E068CA000BB083 /* PhotoOverview */ = {
+			isa = PBXGroup;
+			children = (
+				192942BF22E06930000BB083 /* FEPhotoOverViewController.swift */,
+				192942C022E06930000BB083 /* FEPhotoOverViewController.xib */,
+				1911EF3922E0B2B90053E140 /* FEPhotoOverViewCell.swift */,
+				1913DB0E22E1F6D50096A7F1 /* PhotoOverviewThumbnailView.swift */,
+				1913DB1022E1F9240096A7F1 /* PhotoOverviewToolBar.swift */,
+				1913DB1322E2184F0096A7F1 /* PhotoOverviewThumbnailCell.swift */,
+				1913174922E58E7400072D00 /* FEphotoOverviewThumbnailViewFlowLayout.swift */,
+			);
+			path = PhotoOverview;
+			sourceTree = "<group>";
+		};
 		829B0E8E7853672BEDBCFBFC /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -1425,6 +1457,7 @@
 				1918A1B322BA233A00F1E4DE /* small_24.jpg in Resources */,
 				1918A1A022BA233A00F1E4DE /* small_112.jpg in Resources */,
 				1918A2D822BA239600F1E4DE /* 145.jpg in Resources */,
+				192942C222E06930000BB083 /* FEPhotoOverViewController.xib in Resources */,
 				1918A14422BA233A00F1E4DE /* small_75.jpg in Resources */,
 				1918A18122BA233A00F1E4DE /* small_101.jpg in Resources */,
 				1918A2A622BA239600F1E4DE /* 132.jpg in Resources */,
@@ -1666,13 +1699,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1913DB1422E2184F0096A7F1 /* PhotoOverviewThumbnailCell.swift in Sources */,
 				190EE52A22B6003400E2A47E /* FEBaseTabBarViewController.swift in Sources */,
 				19154AC322BA816200FF3067 /* FEPhotoBaseCollectionController.swift in Sources */,
+				1913DB0F22E1F6D50096A7F1 /* PhotoOverviewThumbnailView.swift in Sources */,
 				1914E98422BB5C4A00C5E6B4 /* FENavigationControllerDelegate.swift in Sources */,
+				192942C422E0698D000BB083 /* FEPhotoOverviewAnimator.swift in Sources */,
 				190EE53822B6121E00E2A47E /* FEPhotoCell.swift in Sources */,
 				19178A9322DD70AA00DAD2EA /* FEExtension.swift in Sources */,
 				190EE4FD22B5FFE800E2A47E /* ViewController.swift in Sources */,
 				190E389622B77F380091E8A3 /* FEPhotoCellData.swift in Sources */,
+				192942C122E06930000BB083 /* FEPhotoOverViewController.swift in Sources */,
+				1911EF3A22E0B2B90053E140 /* FEPhotoOverViewCell.swift in Sources */,
 				190EE4F922B5FFE800E2A47E /* AppDelegate.swift in Sources */,
 				19154AC122BA781400FF3067 /* FEPhotoCollectionViewAnimator.swift in Sources */,
 				190E389322B7426E0091E8A3 /* FECommon.swift in Sources */,
@@ -1680,6 +1718,8 @@
 				190EE4FB22B5FFE800E2A47E /* SceneDelegate.swift in Sources */,
 				1914E98222BB5A1800C5E6B4 /* FEAnimatorDelegate.swift in Sources */,
 				190EE52C22B6005100E2A47E /* FEBaseNavigationController.swift in Sources */,
+				1913174A22E58E7400072D00 /* FEphotoOverviewThumbnailViewFlowLayout.swift in Sources */,
+				1913DB1122E1F9240096A7F1 /* PhotoOverviewToolBar.swift in Sources */,
 				191FAD4022B92E87002B0E47 /* FEPhotoSectionData.swift in Sources */,
 				190EE53422B600AE00E2A47E /* FEPhotoSectionHeaderView.swift in Sources */,
 			);

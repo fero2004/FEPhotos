@@ -18,7 +18,7 @@ class FEPhotoCollectionController: FEPhotoBaseCollectionController,UICollectionV
     var longPressImageView : UIImageView? //长按出现的iamgeview
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        self.title = "照片"
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(selectedPhotoChanged(_:)),
         name: NSNotification.Name(rawValue: "selectedPhotoChanged"),
@@ -235,12 +235,20 @@ class FEPhotoCollectionController: FEPhotoBaseCollectionController,UICollectionV
         let photoData = sectionData.photos[indexPath.row]
         
         self.selectedPhoto = photoData
-        let con = FEPhotoCollectionController.init(nibName: "FEPhotoCollectionController", bundle: nil)
-//        con.touchCellCenter = center
-        con.controllerType = self.controllerType == .root ? .step : .detail
-        con.photos = self.photos
-        con.selectedPhoto = photoData
-        self.navigationController?.pushViewController(con, animated: true)
+        if(self.controllerType != .detail) {
+            let con = FEPhotoCollectionController.init(nibName: "FEPhotoCollectionController", bundle: nil)
+            con.controllerType = self.controllerType == .root ? .step : .detail
+            con.photos = self.photos
+            con.selectedPhoto = photoData
+            self.navigationController?.pushViewController(con, animated: true)
+        } else {
+            let con = FEPhotoOverViewController.init(nibName: "FEPhotoOverViewController", bundle: nil)
+            con.selectedPhoto = self.selectedPhoto
+            con.photos = self.photos ?? []
+//            con.hidesBottomBarWhenPushed = true
+            self.navigationController?.pushViewController(con, animated: true)
+        }
+        
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: "selectedPhotoChanged"),
                                         object: photoData)
     }

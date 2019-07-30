@@ -21,10 +21,21 @@ class FENavigationControllerDelegate: NSObject, UINavigationControllerDelegate{
                 if (a == .spread && b == .spread) {
                     return FEPhotoCollectionViewAnimator(operation: operation)
                 } else {
-                    
+                    return FEPhotoOverviewAnimator(operation: operation, fromVC: fromVC, toVC: toVC)
                 }
             }
         }
         return nil
     }
+    
+    func navigationController(_ navigationController: UINavigationController, interactionControllerFor animationController: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
+        if let a = animationController as? FEPhotoOverviewAnimator {
+            let fromVc = a.fromViewController as? FEAnimatorDelegate
+            if let interactionTransition = fromVc?.interactionTransition?() {
+                return interactionTransition
+            }
+        }
+        return nil
+    }
+    
 }

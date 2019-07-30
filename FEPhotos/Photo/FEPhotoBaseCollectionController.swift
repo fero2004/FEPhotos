@@ -46,17 +46,17 @@ class FEPhotoBaseCollectionController: UICollectionViewController {
     }
     
     //滑倒上个界面选择的cell位置,手指的位置
-    func scroollToSelectedPhotoInDatas (pre : FEPhotoBaseCollectionController!) {
+    func scroollToSelectedPhotoInDatas (pre : FEPhotoBaseCollectionController?) {
         let (row, section) = self.findSelectedPhotoInDatas() ?? (-1, -1)
-        let (preRow, preSection) = pre.findSelectedPhotoInDatas() ?? (-1, -1)
-        if (row >= 0 && preRow >= 0) {
+        let (preRow, preSection) = pre?.findSelectedPhotoInDatas() ?? (-1, -1)
+        if (row >= 0) {
             let cellLayoutAttributes = self.collectionView.layoutAttributesForItem(at: IndexPath.init(row: row, section: section))
             let center = CGPoint.init(x: cellLayoutAttributes!.frame.midX, y: cellLayoutAttributes!.frame.midY)
             
-            let precell = pre.collectionView.cellForItem(at: IndexPath.init(row: preRow, section: preSection))
+            let precell = pre?.collectionView.cellForItem(at: IndexPath.init(row: preRow, section: preSection))
             //相对于window的位置
-            let rect = precell?.convert(precell!.bounds, to: UIApplication.shared.keyWindow)
-            let touchCellCenter = CGPoint.init(x: rect!.midX, y: rect!.midY)
+            let rect = precell?.convert(precell?.bounds ?? CGRect.zero, to: UIApplication.shared.keyWindow) ?? CGRect.zero
+            let touchCellCenter = CGPoint.init(x: rect.midX, y: rect.midY)
             
             var offsety = center.y - self.collectionView.frame.height
                 + self.contentFrame.size.height - touchCellCenter.y
@@ -88,9 +88,10 @@ class FEPhotoBaseCollectionController: UICollectionViewController {
             let screenSectioheaderAttributes = CGRect.init(x: 0, y: 0, width: sectioheaderAttributes!.frame.width, height: sectioheaderAttributes!.frame.height)
             //计算cell相当于屏幕的大小位置
             let screenCellRect = CGRect.init(x: touchCellCenter.x - cellLayoutAttributes!.frame.width/2,
-                                         y: touchCellCenter.y - self.collectionView.fe_contentInsert.top - cellLayoutAttributes!.frame.height/2,
-                                         width: cellLayoutAttributes!.frame.width,
-                                         height: cellLayoutAttributes!.frame.height)
+                                             y: touchCellCenter.y - self.collectionView.fe_contentInsert.top - cellLayoutAttributes!.frame.height/2,
+                                             width: cellLayoutAttributes!.frame.width,
+                                             height: cellLayoutAttributes!.frame.height)
+            
             if(screenCellRect.intersects(screenSectioheaderAttributes)){
                 let temprect = screenCellRect.intersection(screenSectioheaderAttributes)
                 offsety = offsety - temprect.height
@@ -126,12 +127,12 @@ class FEPhotoBaseCollectionController: UICollectionViewController {
             }
             break
         case .step:
-            if (a.month == b.month) {
+            if (a.year == b.year && a.month == b.month) {
                 return true
             }
             break
         case .detail:
-            if (a.day == b.day) {
+            if (a.year == b.year && a.month == b.month && a.day == b.day) {
                 return true
             }
             break;

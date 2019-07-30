@@ -10,10 +10,12 @@ import UIKit
 
 @objc public enum FEAnimatorType: Int {
     // spread 3个界面动画
-    // detailed 最后去看原图界面的动画
-    case spread,detailed
+    // overview 最后去看原图界面的动画
+    case spread,overview
 }
 
 @objc public protocol FEAnimatorDelegate {
     @objc func animatorType () -> FEAnimatorType
+    //手势动画用
+    @objc optional func interactionTransition () -> FEPhotoOverviewAnimator?
 }

@@ -4,4 +4,5 @@ platform :ios, '11.0'
 target 'FEPhotos' do
   use_frameworks!
   pod 'SwifterSwift'
+  pod 'SnapKit'
 end
