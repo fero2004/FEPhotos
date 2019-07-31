@@ -57,9 +57,21 @@ extension FEphotoOverviewThumbnailViewFlowLayout {
 
 class FEphotoOverviewThumbnailViewFlowLayout: UICollectionViewFlowLayout {
     var photos : [FEPhotoCellData] = [FEPhotoCellData]()
-
+    var normalLayout : Bool = false
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         guard let array = super.layoutAttributesForElements(in: rect) else { return nil }
+        if (normalLayout) {
+            var orginReact = [CGRect]()
+            var x : CGFloat = 0.0
+            for _ in 0...self.photos.count - 1 {
+                orginReact.append(CGRect.init(x: x, y: 0, width: self.itemSize.width, height: self.itemSize.height))
+                x = x + self.itemSize.width + self.minimumInteritemSpacing
+            }
+            for attr in array {
+                attr.frame = orginReact[attr.indexPath.row]
+            }
+            return array
+        }
         
         if let currect = self.currect, let currectPersent = self.currectPersent, let nextPersent = self.nextPersent {
             //完全显示时候的Widths
@@ -240,5 +252,23 @@ class FEphotoOverviewThumbnailViewFlowLayout: UICollectionViewFlowLayout {
     override func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
         return true
     }
-
+    
+    override func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint, withScrollingVelocity velocity: CGPoint) -> CGPoint {
+        var rect = CGRect.zero
+        rect.origin.x = proposedContentOffset.x
+        rect.origin.y = 0.0
+        rect.size = self.collectionView!.frame.size
+       
+        guard let array = self.layoutAttributesForElements(in: rect) else { return proposedContentOffset }
+        let centerx = proposedContentOffset.x + self.collectionView!.frame.size.width / 2
+        
+        var minDelta = CGFloat.greatestFiniteMagnitude
+        for attr in array {
+            if(abs(minDelta) > abs(attr.center.x - centerx)) {
+                minDelta = attr.center.x - centerx
+            }
+        }
+        let x = proposedContentOffset.x + minDelta
+        return CGPoint.init(x: x, y: proposedContentOffset.y)
+    }
 }

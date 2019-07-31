@@ -13,11 +13,7 @@ class PhotoOverviewThumbnailView: UIView, UICollectionViewDataSource,UICollectio
     
     var selectedPhoto : FEPhotoCellData?
     
-    var startX : Double = 0.0
-    
-//    var overViewScrollViewPreOffsetX : CGFloat = 0.0
-//
-//    var overViewScrollViewNextOffsetX : CGFloat = 444.0
+    var didSelectPhoto : ((FEPhotoCellData,Bool,Bool) -> ())?
     
     //原始数据
     var photos : [FEPhotoCellData] = [FEPhotoCellData]()
@@ -44,7 +40,15 @@ class PhotoOverviewThumbnailView: UIView, UICollectionViewDataSource,UICollectio
     }()
     
     func overViewScrollViewDidScroll(_ scrollView: UIScrollView, currect : FEPhotoCellData, currectPersent : CGFloat,next : FEPhotoCellData? ,nextPersent : CGFloat) {
-        
+ 
+        self.flowLayout.currect = currect
+        self.flowLayout.currectPersent = currectPersent
+        self.flowLayout.next = next
+        self.flowLayout.nextPersent = nextPersent
+        if (self.collectionView.isDragging) {
+            return
+        }
+        self.flowLayout.normalLayout = false
         var x : CGFloat = 0.0
         let width = self.flowLayout.itemSize.width
         for _ in 0...self.photos.firstIndex(of: currect)! {
@@ -52,12 +56,6 @@ class PhotoOverviewThumbnailView: UIView, UICollectionViewDataSource,UICollectio
         }
         let addWidth = (self.flowLayout.itemSize.width + self.flowLayout.minimumInteritemSpacing) * (1.0 - currectPersent)
         let value : CGFloat = (x - width - self.flowLayout.minimumInteritemSpacing) + addWidth - collectionView.contentInset.left
-        
-        self.flowLayout.currect = currect
-        self.flowLayout.currectPersent = currectPersent
-        self.flowLayout.next = next
-        self.flowLayout.nextPersent = nextPersent
-        
         self.collectionView.setContentOffset(CGPoint.init(x: value, y: 0), animated: false)
         self.collectionView.bounds = CGRect.init(x: value,
                                                  y: 0,
@@ -84,15 +82,24 @@ class PhotoOverviewThumbnailView: UIView, UICollectionViewDataSource,UICollectio
         flowLayout.photos = self.photos
         flowLayout.minimumLineSpacing = 2.0
         flowLayout.itemSize = CGSize.init(width: self.frame.height / 2, height: self.frame.height)
-//        flowLayout.estimatedItemSize = CGSize.init(width: 10, height: 10)
-        collectionView.contentInset = UIEdgeInsets(top: 0, left: self.frame.width/2 - flowLayout.itemSize.width / 2, bottom: 0, right: 0)
-//        collectionView.bounds = CGRect.init(x: 0, y: 0, width: self.frame.width, height: self.frame.height)
-        self.startX = collectionView.contentOffset.x.double
+        collectionView.contentInset = UIEdgeInsets(top: 0, left: self.frame.width/2 - flowLayout.itemSize.width / 2, bottom: 0, right: self.frame.width/2 - flowLayout.itemSize.width / 2)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+//        let data = self.photos[indexPath.row]
+//        let photo = self.selectedPhoto!
+//        let fitSize = CGSize.init(width: photo.orginImage!.size.width, height: photo.orginImage!.size.height)
+//        let pesent_1_Width : CGFloat = self.flowLayout.itemSize.height / (fitSize.height / fitSize.width)
+//        if (photo == data) {
+//            return CGSize.init(width: pesent_1_Width, height: self.frame.height)
+//        } else {
+//            return CGSize.init(width: self.frame.height / 2, height: self.frame.height)
+//        }
+//    }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return self.photos.count
@@ -104,6 +111,48 @@ class PhotoOverviewThumbnailView: UIView, UICollectionViewDataSource,UICollectio
         cell.imageView.image = data.smallImage
         cell.setNeedsLayout()
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let data = self.photos[indexPath.row]
+        if (self.didSelectPhoto != nil && data != self.selectedPhoto) {
+            self.didSelectPhoto!(data,true,false)
+        }
+    }
+    
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        self.flowLayout.normalLayout = true
+        self.collectionView.performBatchUpdates({
+            self.flowLayout.invalidateLayout()
+        }) { (b) in
+        }
+    }
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        self.flowLayout.normalLayout = false
+        self.collectionView.performBatchUpdates({
+            self.flowLayout.invalidateLayout()
+        }) { (b) in
+        }
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if (self.collectionView.isDragging) {
+            let indexPathsForVisibleItems = self.collectionView.indexPathsForVisibleItems
+            let centerx = scrollView.contentOffset.x + scrollView.frame.width / 2
+            for l in indexPathsForVisibleItems {
+                if let attr = self.collectionView.layoutAttributesForItem(at: l), let cell = self.collectionView.cellForItem(at: l) {
+                    //不能用attr.frame来判断,不准,原因不明
+                    if(cell.frame.contains(CGPoint.init(x: centerx, y: self.frame.height / 2))){
+                        let p = self.photos[attr.indexPath.row]
+                        if (self.didSelectPhoto != nil) {
+                            self.didSelectPhoto!(p,false,false)
+                        }
+                        break
+                    }
+                }
+            }
+        }
     }
     /*
     // Only override draw() if you perform custom drawing.

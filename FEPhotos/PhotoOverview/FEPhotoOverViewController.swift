@@ -28,9 +28,9 @@ class FEPhotoOverViewController: UIViewController, FEAnimatorDelegate,UICollecti
         didSet {
             if pageIndex != oldValue {
                 self.selectedPhoto = self.photos[pageIndex]
+                thumbnailView.selectedPhoto = self.selectedPhoto
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: "selectedPhotoChanged"),
                                                 object: self.selectedPhoto)
-//                delegate.photoBrowser(self, pageIndexDidChanged: pageIndex)
             }
         }
     }
@@ -101,6 +101,11 @@ class FEPhotoOverViewController: UIViewController, FEAnimatorDelegate,UICollecti
             make.right.equalTo(self.view.safeAreaLayoutGuide.snp.right)
             make.height.equalTo(44)
         }
+        self.thumbnailView.didSelectPhoto = { (p,animated,contact) in
+            self.selectedPhoto = p
+            self.pageIndex = self.photos.firstIndex(of: p)!
+            self.scrollToItem(self.pageIndex, at: .left, animated: animated,contact:contact)
+        }
     }
     
     @objc func upload(item : UIBarButtonItem) {
@@ -115,7 +120,6 @@ class FEPhotoOverViewController: UIViewController, FEAnimatorDelegate,UICollecti
         
     }
     
-    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         let index = pageIndex
@@ -126,30 +130,30 @@ class FEPhotoOverViewController: UIViewController, FEAnimatorDelegate,UICollecti
             self.scrollToItem(index, at: .left, animated: false)
             self.collectionView.layoutIfNeeded()
         }
-        
     }
     
     /// 滑到哪张图片
     /// - parameter index: 图片序号，从0开始
-    open func scrollToItem(_ index: Int, at position: UICollectionView.ScrollPosition, animated: Bool) {
+    open func scrollToItem(_ index: Int, at position: UICollectionView.ScrollPosition, animated: Bool,contact : Bool = true) {
         var safeIndex = max(0, index)
         safeIndex = min(self.photos.count - 1, safeIndex)
         let indexPath = IndexPath(item: safeIndex, section: 0)
         collectionView.scrollToItem(at: indexPath, at: position, animated: animated)
-       
-        let index = self.pageIndex
-        let currect = self.photos[index]
-        var next : FEPhotoCellData?
-        if (index + 1 <= self.photos.count - 1) {
-            next = self.photos[index + 1]
+        if (contact) {
+            let index = self.pageIndex
+            let currect = self.photos[index]
+            var next : FEPhotoCellData?
+            if (index + 1 <= self.photos.count - 1) {
+                next = self.photos[index + 1]
+            }
+            self.thumbnailView.overViewScrollViewDidScroll(collectionView, currect: currect, currectPersent: 1.0, next: next, nextPersent: 0.0)
         }
-        self.thumbnailView.overViewScrollViewDidScroll(collectionView, currect: currect, currectPersent: 1.0, next: next, nextPersent: 0.0)
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
     }
-    
+
     /// scrollView滑动
     open func scrollViewDidScroll(_ scrollView: UIScrollView) {
         var value: CGFloat = 0
@@ -182,7 +186,6 @@ class FEPhotoOverViewController: UIViewController, FEAnimatorDelegate,UICollecti
             next = self.photos[index + 1]
         }
         self.thumbnailView.overViewScrollViewDidScroll(scrollView, currect: currect, currectPersent: currectPersent, next: next, nextPersent: nextPersent)
-//        self.thumbnailView.overViewScrollViewDidScroll(scrollView)
         
         self.pageIndex = max(0, Int(value))
     }

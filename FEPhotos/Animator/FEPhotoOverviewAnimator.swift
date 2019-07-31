@@ -114,9 +114,7 @@ extension FEPhotoOverviewAnimator {
                 } else {
                     self.doAnimate(toCell: toCell, zView: zView, transitionContext: transitionContext, fromVC: fromVC)
                 }
-
             }
-
         }
     }
 }
