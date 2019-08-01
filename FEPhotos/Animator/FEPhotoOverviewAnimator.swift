@@ -57,8 +57,32 @@ extension FEPhotoOverviewAnimator {
 //            }
             let eFrame = rect
             toCell.imageView.isHidden = true
-            
             //                            toCell.imageView.alpha = 0
+            let toolBar = fromVC.toolBar
+            let thumbnailView = fromVC.thumbnailView
+            toolBar.alpha = 1
+            thumbnailView.alpha = 1
+            
+            self.toViewController!.tabBarController!.tabBar.alpha = 1
+            toolBar.snp.removeConstraints()
+            thumbnailView.snp.removeConstraints()
+            toolBar.removeFromSuperview()
+            thumbnailView.removeFromSuperview()
+            self.toViewController!.tabBarController!.view.addSubview(toolBar)
+            self.toViewController!.tabBarController!.view.addSubview(thumbnailView)
+            toolBar.snp.makeConstraints { (make) in
+                make.left.equalTo(self.toViewController!.tabBarController!.view.safeAreaLayoutGuide.snp.left)
+                make.bottom.equalTo(self.toViewController!.tabBarController!.view.safeAreaLayoutGuide.snp.bottom)
+                make.right.equalTo(self.toViewController!.tabBarController!.view.safeAreaLayoutGuide.snp.right)
+                make.height.equalTo(49)
+            }
+            thumbnailView.snp.makeConstraints { (make) in
+                make.left.equalTo(self.toViewController!.tabBarController!.view.safeAreaLayoutGuide.snp.left)
+                make.bottom.equalTo(toolBar.snp.top)
+                make.right.equalTo(self.toViewController!.tabBarController!.view.safeAreaLayoutGuide.snp.right)
+                make.height.equalTo(44)
+            }
+            
             UIView.animate(withDuration: self.animationDuration / 2,
                            delay: 0,
                            //                                       usingSpringWithDamping: 0.75,
@@ -67,8 +91,11 @@ extension FEPhotoOverviewAnimator {
                 animations: {
                     zView.frame = eFrame
 //                    toCell.imageView.alpha = 1
-                    fromVC.tabBarController?.tabBar.alpha = 1
             }) { _ in
+                toolBar.snp.removeConstraints()
+                thumbnailView.snp.removeConstraints()
+                toolBar.removeFromSuperview()
+                thumbnailView.removeFromSuperview()
                 zView.removeFromSuperview()
                 toCell.imageView.isHidden = false
                 transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
@@ -77,6 +104,9 @@ extension FEPhotoOverviewAnimator {
                            delay: 0,
                            animations: {
                             fromVC.view.alpha = 0
+                            toolBar.alpha = 0
+                            thumbnailView.alpha = 0
+//                            fromVC.tabBarController?.tabBar.alpha = 1
             }) { _ in
                 
             }
@@ -126,10 +156,33 @@ extension FEPhotoOverviewAnimator {
             toVC.view.layoutSubviews()
             container!.insertSubview(toVC.view, aboveSubview: fromVC.view)
             container!.backgroundColor = .white
-//            toVC.view.isHidden = true
+
             toVC.view.alpha = 0
             toVC.collectionView.isHidden = true
-//            toVC.toolBar.alpha = 0
+            
+            let toolBar = toVC.toolBar
+            let thumbnailView = toVC.thumbnailView
+            toolBar.alpha = 0
+            thumbnailView.alpha = 0
+
+            toolBar.snp.removeConstraints()
+            thumbnailView.snp.removeConstraints()
+            toolBar.removeFromSuperview()
+            thumbnailView.removeFromSuperview()
+            fromVC.tabBarController?.view.addSubview(toolBar)
+            fromVC.tabBarController?.view.addSubview(thumbnailView)
+            toolBar.snp.makeConstraints { (make) in
+                make.left.equalTo(fromVC.tabBarController!.view.safeAreaLayoutGuide.snp.left)
+                make.bottom.equalTo(fromVC.tabBarController!.view.safeAreaLayoutGuide.snp.bottom)
+                make.right.equalTo(fromVC.tabBarController!.view.safeAreaLayoutGuide.snp.right)
+                make.height.equalTo(49)
+            }
+            thumbnailView.snp.makeConstraints { (make) in
+                make.left.equalTo(fromVC.tabBarController!.view.safeAreaLayoutGuide.snp.left)
+                make.bottom.equalTo(toolBar.snp.top)
+                make.right.equalTo(fromVC.tabBarController!.view.safeAreaLayoutGuide.snp.right)
+                make.height.equalTo(44)
+            }
             DispatchQueue.main.async {
                 let (preRow, preSection) = fromVC.findSelectedPhotoInDatas() ?? (-1, -1)
                 if (preRow >= 0) {
@@ -139,7 +192,7 @@ extension FEPhotoOverviewAnimator {
                     zView.contentMode = cell.imageView.contentMode
                     zView.clipsToBounds = true
                     // 开始的位置
-                    var rect = cell.imageView.convert(cell.imageView.bounds, to: self.container!)
+                    let rect = cell.imageView.convert(cell.imageView.bounds, to: self.container!)
 //                    // 维持宽高比例
 //                    let ratio = cell.imageView.originResourceAspectRatio
 //                    if ratio > 0 {
@@ -163,15 +216,38 @@ extension FEPhotoOverviewAnimator {
                                    animations: {
                                     zView.transform.scaledBy(x: eFrame.width / sFrame.width, y: eFrame.height / sFrame.height)
                                     zView.frame = eFrame
-                                    fromVC.tabBarController?.tabBar.alpha = 0
-                                    toVC.toolBar.alpha = 1
+//                                    fromVC.tabBarController?.tabBar.alpha = 0
+//                                    toVC.toolBar.alpha = 1
                                     toVC.view.alpha = 1
+                                    toolBar.alpha = 1
+                                    thumbnailView.alpha = 1
+                                    
                     }) { _ in
                         zView.removeFromSuperview()
                         transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
                         cell.imageView.isHidden = false
                         toVC.collectionView.isHidden = false
                         fromVC.view.alpha = 1
+                        fromVC.tabBarController?.tabBar.alpha = 0
+                        
+                        toolBar.snp.removeConstraints()
+                        thumbnailView.snp.removeConstraints()
+                        toolBar.removeFromSuperview()
+                        thumbnailView.removeFromSuperview()
+                        toVC.view.addSubview(toolBar)
+                        toVC.view.addSubview(thumbnailView)
+                        toolBar.snp.makeConstraints { (make) in
+                            make.left.equalTo(toVC.view.safeAreaLayoutGuide.snp.left)
+                            make.bottom.equalTo(toVC.view.safeAreaLayoutGuide.snp.bottom).offset(49)
+                            make.right.equalTo(toVC.view.safeAreaLayoutGuide.snp.right)
+                            make.height.equalTo(49)
+                        }
+                        thumbnailView.snp.makeConstraints { (make) in
+                            make.left.equalTo(toVC.view.safeAreaLayoutGuide.snp.left)
+                            make.bottom.equalTo(toolBar.snp.top)
+                            make.right.equalTo(toVC.view.safeAreaLayoutGuide.snp.right)
+                            make.height.equalTo(44)
+                        }
                     }
                     UIView.animate(withDuration: self.animationDuration,
                                    delay: 0,

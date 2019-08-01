@@ -91,9 +91,9 @@ class FEPhotoOverViewController: UIViewController, FEAnimatorDelegate,UICollecti
                          item3]
         toolBar.snp.makeConstraints { (make) in
             make.left.equalTo(self.view.safeAreaLayoutGuide.snp.left)
-            make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).offset(44)
+            make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).offset(49)
             make.right.equalTo(self.view.safeAreaLayoutGuide.snp.right)
-            make.height.equalTo(44)
+            make.height.equalTo(49)
         }
         thumbnailView.snp.makeConstraints { (make) in
             make.left.equalTo(self.view.safeAreaLayoutGuide.snp.left)
