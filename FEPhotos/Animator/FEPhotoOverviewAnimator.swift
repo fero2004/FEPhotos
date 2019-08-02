@@ -9,11 +9,30 @@
 import UIKit
 
 public class FEPhotoOverviewAnimator: UIPercentDrivenInteractiveTransition, UIViewControllerAnimatedTransitioning {
+    
     var animationDuration: Double! = 0.5
     var operation : UINavigationController.Operation = UINavigationController.Operation.push
     var fromViewController : UIViewController?
     var toViewController : UIViewController?
     var container : UIView?
+    
+    var angle : CGFloat = 0.0
+    var scale : CGFloat = 0.0
+    var changedPoint : CGPoint = .zero
+    var indexPath : IndexPath?
+    var changedFrame : CGRect = .zero
+    var startchangedFrame : Bool = false
+
+    var cellImageView : UIImageView?
+    var startFrame : CGRect = .zero
+    var backView : UIView?
+    var toolBar : UIView?
+    var thumbnailView : UIView?
+    var transitionContext : UIViewControllerContextTransitioning?
+    
+    public override init() {
+        super.init()
+    }
     
     init(operation : UINavigationController.Operation!, fromVC: UIViewController? , toVC: UIViewController?) {
         super.init()
@@ -40,6 +59,232 @@ public class FEPhotoOverviewAnimator: UIPercentDrivenInteractiveTransition, UIVi
             self.pushAnimate(using: transitionContext)
         } else if(self.operation == .pop) {
             self.popAnimate(using: transitionContext)
+        }
+    }
+    
+    public override func startInteractiveTransition(_ transitionContext: UIViewControllerContextTransitioning) {
+
+        self.transitionContext = transitionContext
+        let fromViewController = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.from)
+        let toViewController = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.to)
+        let container = transitionContext.containerView
+        
+        self.fromViewController = fromViewController
+        self.toViewController = toViewController
+        self.container = container
+        
+        if (self.operation == .push) {
+            if let fromVC = self.fromViewController as? FEPhotoBaseCollectionController, let toVC = self.toViewController as? FEPhotoOverViewController {
+                if let cell = fromVC.collectionView.cellForItem(at: self.indexPath ?? IndexPath.init()) as? FEPhotoCell{
+                    self.cellImageView = UIImageView()
+                    self.cellImageView?.image = cell.imageView.image
+                    self.cellImageView?.contentMode = .scaleAspectFill
+                    self.cellImageView?.clipsToBounds = true
+                    let frame = self.container?.convert(cell.imageView.frame, from: cell.imageView.superview) ?? CGRect.zero
+                    self.cellImageView?.frame = frame
+                    self.startFrame = frame
+                    
+                    toVC.view.frame = transitionContext.finalFrame(for: toVC)
+                    toVC.view.alpha = 0
+                    toVC.collectionView.isHidden = true
+                    
+                    let toolBar = toVC.toolBar
+                    let thumbnailView = toVC.thumbnailView
+                    self.toolBar = toolBar
+                    self.thumbnailView = thumbnailView
+                    toolBar.alpha = 0
+                    thumbnailView.alpha = 0
+                    
+                    toolBar.snp.removeConstraints()
+                    thumbnailView.snp.removeConstraints()
+                    toolBar.removeFromSuperview()
+                    thumbnailView.removeFromSuperview()
+                    fromVC.tabBarController?.view.addSubview(toolBar)
+                    fromVC.tabBarController?.view.addSubview(thumbnailView)
+                    toolBar.snp.makeConstraints { (make) in
+                        make.left.equalTo(fromVC.tabBarController!.view.safeAreaLayoutGuide.snp.left)
+                        make.bottom.equalTo(fromVC.tabBarController!.view.safeAreaLayoutGuide.snp.bottom)
+                        make.right.equalTo(fromVC.tabBarController!.view.safeAreaLayoutGuide.snp.right)
+                        make.height.equalTo(49)
+                    }
+                    thumbnailView.snp.makeConstraints { (make) in
+                        make.left.equalTo(fromVC.tabBarController!.view.safeAreaLayoutGuide.snp.left)
+                        make.bottom.equalTo(toolBar.snp.top)
+                        make.right.equalTo(fromVC.tabBarController!.view.safeAreaLayoutGuide.snp.right)
+                        make.height.equalTo(44)
+                    }
+                    self.backView = UIView()
+                    self.backView?.frame = self.container?.frame ?? .zero
+                    self.backView?.backgroundColor = .white
+                    self.backView?.alpha = 0
+                    
+                    container.addSubview(toVC.view)
+                    container.addSubview(self.backView!)
+                    container.addSubview(self.cellImageView!)
+                    
+                    var rect = frame
+                    //扩大到实际的比列
+                    if (cell.imageView.image!.size.width > cell.imageView.image!.size.height) {
+                        let value = cell.imageView.image!.size.width / cell.imageView.image!.size.height
+                        rect.size.width = rect.size.height * value
+                    } else {
+                        let value = cell.imageView.image!.size.height / cell.imageView.image!.size.width
+                        rect.size.height = rect.size.width * value
+                    }
+                    rect = CGRect.init(x: frame.midX - rect.width / 2,
+                                       y: frame.midY - rect.height / 2,
+                                       width: rect.width,
+                                       height: rect.height)
+                    self.changedFrame = rect
+                    cell.imageView.isHidden = true
+                    self.startchangedFrame = true
+                    DispatchQueue.main.async {
+                        UIView.animate(withDuration: 0.1,
+                                       animations: {
+                                        self.cellImageView?.frame = rect
+                        }) { (b) in
+                            self.startchangedFrame = false
+                        }
+                    }
+                }
+            }
+        } else if(self.operation == .pop) {
+        }
+    }
+    
+    public override func finish() {
+        super.finish()
+        if (self.operation == .push) {
+            if let fromVC = self.fromViewController as? FEPhotoBaseCollectionController, let toVC = self.toViewController as? FEPhotoOverViewController {
+                toVC.collectionView.setNeedsLayout()
+                toVC.collectionView.layoutIfNeeded()
+                
+                DispatchQueue.main.async {
+                    toVC.collectionView.reloadData() {
+                        let toCell = toVC.collectionView.cellForItem(at: IndexPath.init(row: toVC.pageIndex, section: 0)) as? FEPhotoOverViewCell
+                        let toView = toCell?.imageView ?? UIView.init(frame: CGRect.zero)
+                        let eFrame = toView.convert(toView.bounds, to: self.container!)
+                        
+                        let scaley = eFrame.height / self.changedFrame.height
+                        let scalex = eFrame.width / self.changedFrame.width
+
+                        var transform = CGAffineTransform.identity
+                        transform = CGAffineTransform.init(scaleX: scalex, y: scaley)
+                        transform = CGAffineTransform.init(rotationAngle: 0.0).concatenating(transform)
+                        
+                        UIView.animate(withDuration: 0.3,
+                                       animations: {
+                                       
+                                        self.cellImageView!.transform = transform
+                                        self.cellImageView?.center = CGPoint.init(x: eFrame.midX, y: eFrame.midY)
+                                        toVC.view.alpha = 1.0
+                                        toVC.view.isHidden = false
+                                        self.toolBar?.alpha = 1.0
+                                        self.thumbnailView?.alpha = 1.0
+                        }) { (b) in
+                            UIView.animate(withDuration: 0.0,
+                                           animations: {
+                                          
+                                            
+                            }) { (b) in
+                                self.cellImageView?.removeFromSuperview()
+                                self.backView?.removeFromSuperview()
+                                self.toolBar?.removeFromSuperview()
+                                self.backView?.removeFromSuperview()
+                                
+                                fromVC.view.alpha = 1
+                                fromVC.tabBarController?.tabBar.alpha = 0
+                                toVC.collectionView.isHidden = false
+                                
+                                self.toolBar?.snp.removeConstraints()
+                                self.thumbnailView?.snp.removeConstraints()
+                                self.toolBar?.removeFromSuperview()
+                                self.thumbnailView?.removeFromSuperview()
+                                toVC.view.addSubview(self.toolBar!)
+                                toVC.view.addSubview(self.thumbnailView!)
+                                self.toolBar?.snp.makeConstraints { (make) in
+                                    make.left.equalTo(toVC.view.safeAreaLayoutGuide.snp.left)
+                                    make.bottom.equalTo(toVC.view.safeAreaLayoutGuide.snp.bottom).offset(49)
+                                    make.right.equalTo(toVC.view.safeAreaLayoutGuide.snp.right)
+                                    make.height.equalTo(49)
+                                }
+                                self.thumbnailView?.snp.makeConstraints { (make) in
+                                    make.left.equalTo(toVC.view.safeAreaLayoutGuide.snp.left)
+                                    make.bottom.equalTo(self.toolBar!.snp.top)
+                                    make.right.equalTo(toVC.view.safeAreaLayoutGuide.snp.right)
+                                    make.height.equalTo(44)
+                                }
+                                if let cell = fromVC.collectionView.cellForItem(at: self.indexPath ?? IndexPath.init()) as? FEPhotoCell{
+                                    cell.imageView.isHidden = false
+                                }
+                                self.transitionContext?.completeTransition(true)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    public override func cancel() {
+        super.cancel()
+        if (self.operation == .push) {
+            UIView.animate(withDuration: self.animationDuration / 2,
+                           animations: {
+                            self.cellImageView?.transform = CGAffineTransform.identity
+                            self.cellImageView?.frame = self.startFrame
+                            self.toolBar?.alpha = 0.0
+                            self.thumbnailView?.alpha = 0.0
+                            self.backView?.alpha = 0.0
+            }) { (b) in
+                self.toolBar?.removeFromSuperview()
+                self.thumbnailView?.removeFromSuperview()
+                self.backView?.removeFromSuperview()
+                self.cellImageView?.removeFromSuperview()
+                if let fromVC = self.fromViewController as? FEPhotoBaseCollectionController{
+                    if let cell = fromVC.collectionView.cellForItem(at: self.indexPath ?? IndexPath.init()) as? FEPhotoCell{
+                        cell.imageView.isHidden = false
+                    }
+                }
+                self.transitionContext?.completeTransition(false)
+            }
+        }
+    }
+    
+    public override func update(_ percentComplete: CGFloat) {
+        super.update(percentComplete)
+        if (self.startchangedFrame) {
+            return
+        }
+        if (self.operation == .push) {
+            self.cellImageView?.center = CGPoint.init(x: (self.cellImageView?.center.x ?? 0.0)-self.changedPoint.x, y: (self.cellImageView?.center.y ?? 0.0)-self.changedPoint.y)
+            
+            let currentScale: CGFloat = self.cellImageView?.layer.value(forKeyPath: "transform.scale.x") as? CGFloat ?? 0.0
+            let fullScreenScale = (self.toViewController?.view.bounds.width ?? 0.0) / self.changedFrame.width
+            
+            let percent = (currentScale - 1) / (fullScreenScale - 1)
+            
+            self.backView?.alpha = percent
+            self.toolBar?.alpha = percent
+            self.thumbnailView?.alpha = percent
+            
+            let minScale: CGFloat = 0.5
+            let maxScale: CGFloat = fullScreenScale * 2
+            let zoomSpeed: CGFloat = 1.5
+            
+//            print(currentScale)
+//            print(fullScreenScale)
+            
+            var deltaScale = self.scale
+
+            deltaScale = ((deltaScale - 1) * zoomSpeed) + 1
+            deltaScale = min(deltaScale, maxScale / currentScale)
+            deltaScale = max(deltaScale, minScale / currentScale)
+            
+            let zoomTransform = (self.cellImageView?.transform)!.scaledBy(x: deltaScale, y: deltaScale)
+            self.cellImageView?.transform = zoomTransform
+            
+            self.cellImageView?.transform = (self.cellImageView?.transform)!.rotated(by: self.angle)
         }
     }
 }
@@ -183,77 +428,81 @@ extension FEPhotoOverviewAnimator {
                 make.right.equalTo(fromVC.tabBarController!.view.safeAreaLayoutGuide.snp.right)
                 make.height.equalTo(44)
             }
+            toVC.collectionView.setNeedsLayout()
+            toVC.collectionView.layoutIfNeeded()
             DispatchQueue.main.async {
-                let (preRow, preSection) = fromVC.findSelectedPhotoInDatas() ?? (-1, -1)
-                if (preRow >= 0) {
-                    let cell = fromVC.collectionView.cellForItem(at: IndexPath.init(row: preRow, section: preSection)) as! FEPhotoCell
-                    let data = fromVC.selectedPhoto
-                    let zView = UIImageView.init(image: data?.orginImage)// cell.imageView
-                    zView.contentMode = cell.imageView.contentMode
-                    zView.clipsToBounds = true
-                    // 开始的位置
-                    let rect = cell.imageView.convert(cell.imageView.bounds, to: self.container!)
-//                    // 维持宽高比例
-//                    let ratio = cell.imageView.originResourceAspectRatio
-//                    if ratio > 0 {
-//                        rect.size.height = rect.width / ratio
-//                    }
-                    let sFrame = rect
-                    let toCell = toVC.collectionView.cellForItem(at: IndexPath.init(row: toVC.pageIndex, section: 0)) as! FEPhotoOverViewCell
-                    let toView = toCell.imageView
-                    let eFrame = toView.convert(toView.bounds, to: self.container!)
-                    
-                    self.container!.addSubview(zView)
-                    zView.frame = sFrame
-                    zView.transform.scaledBy(x: 1, y: 1)
-                    
-                    cell.imageView.isHidden = true
-                    UIView.animate(withDuration: self.animationDuration,
-                                   delay: 0,
-                                   usingSpringWithDamping: 0.75,
-                                   initialSpringVelocity: 0,
-                                   options: [.curveEaseOut, .allowUserInteraction, .beginFromCurrentState],
-                                   animations: {
-                                    zView.transform.scaledBy(x: eFrame.width / sFrame.width, y: eFrame.height / sFrame.height)
-                                    zView.frame = eFrame
-//                                    fromVC.tabBarController?.tabBar.alpha = 0
-//                                    toVC.toolBar.alpha = 1
-                                    toVC.view.alpha = 1
-                                    toolBar.alpha = 1
-                                    thumbnailView.alpha = 1
-                                    
-                    }) { _ in
-                        zView.removeFromSuperview()
-                        transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
-                        cell.imageView.isHidden = false
-                        toVC.collectionView.isHidden = false
-                        fromVC.view.alpha = 1
-                        fromVC.tabBarController?.tabBar.alpha = 0
+                toVC.collectionView.reloadData() {
+                    let (preRow, preSection) = fromVC.findSelectedPhotoInDatas() ?? (-1, -1)
+                    if (preRow >= 0) {
+                        let cell = fromVC.collectionView.cellForItem(at: IndexPath.init(row: preRow, section: preSection)) as! FEPhotoCell
+                        let data = fromVC.selectedPhoto
+                        let zView = UIImageView.init(image: data?.orginImage)// cell.imageView
+                        zView.contentMode = cell.imageView.contentMode
+                        zView.clipsToBounds = true
+                        // 开始的位置
+                        let rect = cell.imageView.convert(cell.imageView.bounds, to: self.container!)
+                        //                    // 维持宽高比例
+                        //                    let ratio = cell.imageView.originResourceAspectRatio
+                        //                    if ratio > 0 {
+                        //                        rect.size.height = rect.width / ratio
+                        //                    }
+                        let sFrame = rect
+                        let toCell = toVC.collectionView.cellForItem(at: IndexPath.init(row: toVC.pageIndex, section: 0)) as! FEPhotoOverViewCell
+                        let toView = toCell.imageView
+                        let eFrame = toView.convert(toView.bounds, to: self.container!)
                         
-                        toolBar.snp.removeConstraints()
-                        thumbnailView.snp.removeConstraints()
-                        toolBar.removeFromSuperview()
-                        thumbnailView.removeFromSuperview()
-                        toVC.view.addSubview(toolBar)
-                        toVC.view.addSubview(thumbnailView)
-                        toolBar.snp.makeConstraints { (make) in
-                            make.left.equalTo(toVC.view.safeAreaLayoutGuide.snp.left)
-                            make.bottom.equalTo(toVC.view.safeAreaLayoutGuide.snp.bottom).offset(49)
-                            make.right.equalTo(toVC.view.safeAreaLayoutGuide.snp.right)
-                            make.height.equalTo(49)
+                        self.container!.addSubview(zView)
+                        zView.frame = sFrame
+                        zView.transform.scaledBy(x: 1, y: 1)
+                        
+                        cell.imageView.isHidden = true
+                        UIView.animate(withDuration: self.animationDuration,
+                                       delay: 0,
+                                       usingSpringWithDamping: 0.75,
+                                       initialSpringVelocity: 0,
+                                       options: [.curveEaseOut, .allowUserInteraction, .beginFromCurrentState],
+                                       animations: {
+                                        zView.transform.scaledBy(x: eFrame.width / sFrame.width, y: eFrame.height / sFrame.height)
+                                        zView.frame = eFrame
+                                        //                                    fromVC.tabBarController?.tabBar.alpha = 0
+                                        //                                    toVC.toolBar.alpha = 1
+                                        toVC.view.alpha = 1
+                                        toolBar.alpha = 1
+                                        thumbnailView.alpha = 1
+                                        
+                        }) { _ in
+                            zView.removeFromSuperview()
+                            transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
+                            cell.imageView.isHidden = false
+                            toVC.collectionView.isHidden = false
+                            fromVC.view.alpha = 1
+                            fromVC.tabBarController?.tabBar.alpha = 0
+                            
+                            toolBar.snp.removeConstraints()
+                            thumbnailView.snp.removeConstraints()
+                            toolBar.removeFromSuperview()
+                            thumbnailView.removeFromSuperview()
+                            toVC.view.addSubview(toolBar)
+                            toVC.view.addSubview(thumbnailView)
+                            toolBar.snp.makeConstraints { (make) in
+                                make.left.equalTo(toVC.view.safeAreaLayoutGuide.snp.left)
+                                make.bottom.equalTo(toVC.view.safeAreaLayoutGuide.snp.bottom).offset(49)
+                                make.right.equalTo(toVC.view.safeAreaLayoutGuide.snp.right)
+                                make.height.equalTo(49)
+                            }
+                            thumbnailView.snp.makeConstraints { (make) in
+                                make.left.equalTo(toVC.view.safeAreaLayoutGuide.snp.left)
+                                make.bottom.equalTo(toolBar.snp.top)
+                                make.right.equalTo(toVC.view.safeAreaLayoutGuide.snp.right)
+                                make.height.equalTo(44)
+                            }
                         }
-                        thumbnailView.snp.makeConstraints { (make) in
-                            make.left.equalTo(toVC.view.safeAreaLayoutGuide.snp.left)
-                            make.bottom.equalTo(toolBar.snp.top)
-                            make.right.equalTo(toVC.view.safeAreaLayoutGuide.snp.right)
-                            make.height.equalTo(44)
+                        UIView.animate(withDuration: self.animationDuration,
+                                       delay: 0,
+                                       animations: {
+                                        fromVC.view.alpha = 0
+                        }) { _ in
                         }
-                    }
-                    UIView.animate(withDuration: self.animationDuration,
-                                   delay: 0,
-                                   animations: {
-                                    fromVC.view.alpha = 0
-                    }) { _ in
                     }
                 }
             }

@@ -9,13 +9,30 @@
 import UIKit
 import SwifterSwift
 
-class FEPhotoCollectionController: FEPhotoBaseCollectionController,UICollectionViewDelegateFlowLayout,FEAnimatorDelegate {
+class FEPhotoIndexPinchGestureRecognizer: UIPinchGestureRecognizer {
+    var indexPath : IndexPath?
+}
+
+class FEPhotoCollectionController: FEPhotoBaseCollectionController,UICollectionViewDelegateFlowLayout,FEAnimatorDelegate,UIGestureRecognizerDelegate {
+    
+    var isDidAppear = false
+    var longPressImageView : UIImageView? //长按出现的iamgeview
+    var lastPoint = CGPoint.zero
+    //手势交互
+    var transition : FEPhotoOverviewAnimator?
     
     func animatorType() -> FEAnimatorType {
         return .spread
     }
-    var isDidAppear = false
-    var longPressImageView : UIImageView? //长按出现的iamgeview
+    
+    func interactionTransition() -> FEPhotoOverviewAnimator? {
+        if (self.controllerType == .detail)
+        {
+            return self.transition
+        }
+        return nil
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "照片"
@@ -53,11 +70,13 @@ class FEPhotoCollectionController: FEPhotoBaseCollectionController,UICollectionV
 //        self.collectionView.canCancelContentTouches = false
 //        self.collectionView.isMultipleTouchEnabled = false
 //        self.navigationItem.leftItemsSupplementBackButton = true
-        
-        let lonpress = UILongPressGestureRecognizer(target: self, action: #selector(longPress))
-        lonpress.minimumPressDuration = 0.5
-        lonpress.delaysTouchesBegan = true
-        self.view.addGestureRecognizer(lonpress)
+        if (self.controllerType != .detail)
+        {
+            let lonpress = UILongPressGestureRecognizer(target: self, action: #selector(longPress))
+            lonpress.minimumPressDuration = 0.5
+            lonpress.delaysTouchesBegan = true
+            self.view.addGestureRecognizer(lonpress)
+        }
     }
     
     @objc func longPress(gesture: UILongPressGestureRecognizer)  {
@@ -166,28 +185,6 @@ class FEPhotoCollectionController: FEPhotoBaseCollectionController,UICollectionV
         // #warning Incomplete implementation, return the number of sections
         return self.datas.count
     }
-    
-//    override func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-//        let sectionData = self.datas[indexPath.section]
-//        let photoData = sectionData.photos[indexPath.row]
-//        if (photoData.id == self.selectedPhoto?.id && self.isDidAppear) {
-//            //没有找到,重新设置selecteddata,取屏幕中间的数据
-//            let indexPathsForVisibleCells = self.collectionView.indexPathsForVisibleItems
-//            let indexPaths = indexPathsForVisibleCells.sorted(by: { (a,b) -> Bool in
-//                return a.compare(b) == .orderedAscending
-//            })
-//            if (indexPaths.count > 0) {
-//                let index = indexPaths.count / 2
-//                let indexPath1 = indexPaths[index]
-//                let sectionData1 = self.datas[indexPath1.section]
-//                let photoData1 = sectionData1.photos[indexPath1.row]
-//                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "selectedPhotoChanged"),
-//                                                object: photoData1)
-//            }
-//        } else {
-//
-//        }
-//    }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         let sectionData = self.datas[section]
@@ -207,11 +204,93 @@ class FEPhotoCollectionController: FEPhotoBaseCollectionController,UICollectionV
             break
         case .detail:
             cell.imageView.image = photoData.bigImage
+            
+            cell.imageView.isUserInteractionEnabled = true
+            cell.imageView.removeGestureRecognizers()
+            //捏合手势
+            let pinch = FEPhotoIndexPinchGestureRecognizer.init(target: self, action: #selector(userDidPinch(_ : )))
+            pinch.indexPath = indexPath
+            pinch.delegate = self
+            cell.imageView.addGestureRecognizer(pinch)
+            //旋转手势
+            let rotate = UIRotationGestureRecognizer.init(target: self, action: #selector(userDidRoate(_:)))
+            rotate.delegate = self
+            cell.imageView.addGestureRecognizer(rotate)
             break
         default:
             break
         }
         return cell
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        if ((gestureRecognizer is UIPinchGestureRecognizer)  && (otherGestureRecognizer is UIRotationGestureRecognizer)) {
+            return false
+        } else if ((gestureRecognizer is UIRotationGestureRecognizer)  && (otherGestureRecognizer is UIPinchGestureRecognizer)) {
+            return false
+        }
+        return true
+    }
+    
+    @objc func userDidRoate(_ recognizer : UIRotationGestureRecognizer) {
+        if recognizer.state == .began || recognizer.state == .changed {
+            if (self.transition != nil) {
+                self.transition?.angle = recognizer.rotation
+            }
+        }
+        recognizer.rotation = 0
+    }
+    
+    @objc func userDidPinch(_ recognizer : FEPhotoIndexPinchGestureRecognizer) {        
+        let scale = recognizer.scale
+        if (recognizer.state == .began) {
+            if (recognizer.scale >= 1) {
+                self.transition = FEPhotoOverviewAnimator()
+                self.transition!.operation = UINavigationController.Operation.push
+                self.transition!.indexPath = recognizer.indexPath
+                self.lastPoint = recognizer.location(in: self.view)
+                
+                let indexPath = recognizer.indexPath!
+                let sectionData = self.datas[indexPath.section]
+                let photoData = sectionData.photos[indexPath.row]
+                self.selectedPhoto = photoData
+                
+                let con = FEPhotoOverViewController.init(nibName: "FEPhotoOverViewController", bundle: nil)
+                con.selectedPhoto = self.selectedPhoto
+                con.photos = self.photos ?? []
+                self.navigationController?.pushViewController(con, animated: true)
+                
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "selectedPhotoChanged"),
+                                                object: photoData)
+                
+            } else {
+                recognizer.cancelsTouchesInView = true
+            }
+        } else if(recognizer.state == .changed) {
+            if (recognizer.numberOfTouches < 2) {
+                recognizer.isEnabled = false
+                recognizer.isEnabled = true
+            }
+            let point = recognizer.location(in: self.view)
+            self.transition?.scale = scale
+            self.transition?.changedPoint = CGPoint.init(x: self.lastPoint.x - point.x, y: self.lastPoint.y - point.y)
+            self.transition?.update(scale)
+            self.lastPoint = point
+        } else if(recognizer.state == .ended || recognizer.state == .cancelled) {
+            let currentScale: CGFloat = self.transition?.cellImageView?.layer.value(forKeyPath: "transform.scale.x") as? CGFloat ?? 0.0
+            print(currentScale)
+            if (currentScale > 1.3) {
+                self.transition?.finish()
+            } else {
+                self.transition?.cancel()
+            }
+            self.transition = nil
+        }
+        recognizer.scale = 1
     }
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
