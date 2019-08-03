@@ -280,7 +280,7 @@ class FEPhotoCollectionController: FEPhotoBaseCollectionController,UICollectionV
             self.transition?.changedPoint = CGPoint.init(x: self.lastPoint.x - point.x, y: self.lastPoint.y - point.y)
             self.transition?.update(scale)
             self.lastPoint = point
-        } else if(recognizer.state == .ended || recognizer.state == .cancelled) {
+        } else if(recognizer.state == .ended || recognizer.state == .cancelled || recognizer.state == .failed) {
             let currentScale: CGFloat = self.transition?.cellImageView?.layer.value(forKeyPath: "transform.scale.x") as? CGFloat ?? 0.0
             print(currentScale)
             if (currentScale > 1.3) {
