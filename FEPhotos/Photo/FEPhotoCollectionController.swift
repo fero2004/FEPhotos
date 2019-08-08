@@ -8,6 +8,7 @@
 
 import UIKit
 import SwifterSwift
+import Kingfisher
 
 class FEPhotoIndexPinchGestureRecognizer: UIPinchGestureRecognizer {
     var indexPath : IndexPath?
@@ -48,7 +49,11 @@ class FEPhotoCollectionController: FEPhotoBaseCollectionController,UICollectionV
         layout.sectionInset = UIEdgeInsets.zero
         layout.minimumLineSpacing = 0.0
         layout.minimumInteritemSpacing = 0.0
-        layout.itemSize = CGSize(width: width,height: width)
+//        if (self.controllerType == .root) {
+//            layout.itemSize = CGSize(width: UIScreen.main.bounds.width, height: 1000)
+//        } else {
+            layout.itemSize = CGSize(width: width,height: width)
+//        }
         layout.sectionHeadersPinToVisibleBounds = true
         layout.sectionFootersPinToVisibleBounds = true
         // Uncomment the following line to preserve selection between presentations
@@ -185,9 +190,16 @@ class FEPhotoCollectionController: FEPhotoBaseCollectionController,UICollectionV
         // #warning Incomplete implementation, return the number of sections
         return self.datas.count
     }
+    
+//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+//        <#code#>
+//    }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         let sectionData = self.datas[section]
+//        if (self.controllerType == .root) {
+//            return 1
+//        }
         return sectionData.photos.count
     }
 
@@ -197,10 +209,33 @@ class FEPhotoCollectionController: FEPhotoBaseCollectionController,UICollectionV
         let photoData = sectionData.photos[indexPath.row]
         switch self.controllerType {
         case .root:
-            cell.imageView.image = photoData.smallImage
+//            DispatchQueue.global(qos: .background).async {
+//                UIGraphicsBeginImageContextWithOptions(cell.imageView.bounds.size, true, 0)
+//                photoData.smallImage?.draw(in: cell.imageView.bounds)
+//                let image =  UIGraphicsGetImageFromCurrentImageContext()
+//                UIGraphicsEndImageContext()
+//                DispatchQueue.main.async {
+//                    cell.imageView.image = image
+//                }
+//            }
+//            cell.imageView.image = photoData.smallImage
+//            cell.backgroundColor = UIColor.random
+            cell.imageView.kf.setImage(with: LocalFileImageDataProvider.init(fileURL: URL.init(fileURLWithPath: Bundle.main.path(forResource: photoData.smallImagePath!, ofType: nil)!)),
+                                       placeholder: nil,
+                                       options: [.loadDiskFileSynchronously],
+                                       progressBlock: nil,
+                                       completionHandler: nil)
             break
         case .step:
-            cell.imageView.image = photoData.middleImage
+//            cell.imageView.image = photoData.middleImage
+//            let cellRect = cell.contentView.convert(cell.contentView.bounds, to: UIScreen.main.coordinateSpace)
+//            if UIScreen.main.bounds.intersects(cellRect) {
+                cell.imageView.kf.setImage(with: LocalFileImageDataProvider.init(fileURL: URL.init(fileURLWithPath: Bundle.main.path(forResource: photoData.middleImagePath!, ofType: nil)!)),
+                                           placeholder: nil,
+                                           options: [.loadDiskFileSynchronously],
+                                           progressBlock: nil,
+                                           completionHandler: nil)
+//            }
             break
         case .detail:
             cell.imageView.image = photoData.bigImage
@@ -220,6 +255,8 @@ class FEPhotoCollectionController: FEPhotoBaseCollectionController,UICollectionV
         default:
             break
         }
+        //动画的时候可能会隐藏imageview,这里确保不会隐藏
+        cell.imageView.isHidden = false
         return cell
     }
     
@@ -227,14 +264,14 @@ class FEPhotoCollectionController: FEPhotoBaseCollectionController,UICollectionV
         return true
     }
     
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        if ((gestureRecognizer is UIPinchGestureRecognizer)  && (otherGestureRecognizer is UIRotationGestureRecognizer)) {
-            return false
-        } else if ((gestureRecognizer is UIRotationGestureRecognizer)  && (otherGestureRecognizer is UIPinchGestureRecognizer)) {
-            return false
-        }
-        return true
-    }
+//    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+//        if ((gestureRecognizer is UIPinchGestureRecognizer)  && (otherGestureRecognizer is UIRotationGestureRecognizer)) {
+//            return false
+//        } else if ((gestureRecognizer is UIRotationGestureRecognizer)  && (otherGestureRecognizer is UIPinchGestureRecognizer)) {
+//            return false
+//        }
+//        return true
+//    }
     
     @objc func userDidRoate(_ recognizer : UIRotationGestureRecognizer) {
         if recognizer.state == .began || recognizer.state == .changed {
@@ -249,6 +286,7 @@ class FEPhotoCollectionController: FEPhotoBaseCollectionController,UICollectionV
         let scale = recognizer.scale
         if (recognizer.state == .began) {
             if (recognizer.scale >= 1) {
+                self.collectionView.isScrollEnabled = false
                 self.transition = FEPhotoOverviewAnimator()
                 self.transition!.operation = UINavigationController.Operation.push
                 self.transition!.indexPath = recognizer.indexPath
@@ -289,6 +327,7 @@ class FEPhotoCollectionController: FEPhotoBaseCollectionController,UICollectionV
                 self.transition?.cancel()
             }
             self.transition = nil
+            self.collectionView.isScrollEnabled = true
         }
         recognizer.scale = 1
     }

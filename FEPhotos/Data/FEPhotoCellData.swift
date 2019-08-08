@@ -25,27 +25,43 @@ class FEPhotoCellData: NSObject {
     //小图
     var smallImage : UIImage?{
         get{
-            return UIImage.init(named: self.smallImagePath!)
+            let path = Bundle.main.path(forResource: self.smallImagePath!, ofType: nil)
+            return UIImage.init(contentsOfFile: path!)
+            //不能使用,会cache在内存,会爆炸
+//            return UIImage.init(named: self.smallImagePath!)
         }
     }
     //中图
     var middleImage : UIImage?{
         get{
-            return UIImage.init(named: self.smallImagePath!)
+            let path = Bundle.main.path(forResource: self.middleImagePath!, ofType: nil)
+            return UIImage.init(contentsOfFile: path!)
+//            return UIImage.init(named: self.middleImagePath!)
         }
     }
     //大图
     var bigImage : UIImage?{
         get{
-            return UIImage.init(named: self.bigImagePath!)
+            let path = Bundle.main.path(forResource: self.bigImagePath!, ofType: nil)
+            return UIImage.init(contentsOfFile: path!)
+//            return UIImage.init(named: self.bigImagePath!)
         }
     }
     //原图
     var orginImage : UIImage?{
         get{
-            return UIImage.init(named: self.orginImagePath!)
+            let path = Bundle.main.path(forResource: self.orginImagePath!, ofType: nil)
+            return UIImage.init(contentsOfFile: path!)
+//            return UIImage.init(named: self.orginImagePath!)
         }
     }
+    
+    open lazy var orginImageSize: CGSize = {
+         var size = CGSize.zero
+         size = self.orginImage?.size ?? .zero
+         return size
+    }()
+    
     //年份
     var year : Int?
     //月份

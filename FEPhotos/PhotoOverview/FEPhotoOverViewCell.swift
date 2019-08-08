@@ -7,11 +7,14 @@
 //
 
 import UIKit
+import Kingfisher
 
 class FEPhotoOverViewCell: UICollectionViewCell {
     
     /// ImageView
     open var imageView = UIImageView()
+    
+    var photo : FEPhotoCellData?
     
     /// 图片缩放容器
     open var imageContainer = UIScrollView()
@@ -30,6 +33,15 @@ class FEPhotoOverViewCell: UICollectionViewCell {
     
     /// 图片拖动松手回调。isDown: 是否向下
     open var panReleasedCallback: ((_ isDown: Bool) -> Void)?
+    
+    // 捏合手势
+    open var pinchCallback: ((_ pinch:FEPhotoIndexPinchGestureRecognizer,_ scrollview: UIScrollView) -> Void)?
+    
+    // 旋转手势
+    open var rotateCallback: ((_ rotate: UIRotationGestureRecognizer)  -> Void)?
+    
+    //是否在做pop动画
+    open var isPop: (() -> Bool)?
     
     /// 是否需要添加长按手势。子类可重写本属性，返回`false`即可避免添加长按手势
     open var isNeededLongPressGesture: Bool {
@@ -50,6 +62,7 @@ class FEPhotoOverViewCell: UICollectionViewCell {
         imageContainer.delegate = self
         imageContainer.showsVerticalScrollIndicator = false
         imageContainer.showsHorizontalScrollIndicator = false
+//        imageContainer.pinchGestureRecognizer?.delegate = self
         if #available(iOS 11.0, *) {
             imageContainer.contentInsetAdjustmentBehavior = .never
         }
@@ -57,12 +70,17 @@ class FEPhotoOverViewCell: UICollectionViewCell {
         imageContainer.addSubview(imageView)
         imageView.clipsToBounds = true
         
+        self.addGesture()
+        // 子类作进一步初始化
+        didInit()
+    }
+    
+    func addGesture() {
         // 长按手势
         if isNeededLongPressGesture {
             let longPress = UILongPressGestureRecognizer(target: self, action: #selector(onLongPress(_:)))
             contentView.addGestureRecognizer(longPress)
         }
-        
         // 双击手势
         let doubleTap = UITapGestureRecognizer(target: self, action: #selector(onDoubleClick(_:)))
         doubleTap.numberOfTapsRequired = 2
@@ -76,10 +94,32 @@ class FEPhotoOverViewCell: UICollectionViewCell {
         // 拖动手势
         let pan = UIPanGestureRecognizer(target: self, action: #selector(onPan(_:)))
         pan.delegate = self
+        pan.maximumNumberOfTouches = 1
         // 必须加在图片容器上。不能加在contentView上，否则长图下拉不能触发
         imageContainer.addGestureRecognizer(pan)
-        // 子类作进一步初始化
-        didInit()
+        
+        //捏合手势
+        let pinch = FEPhotoIndexPinchGestureRecognizer.init(target: self, action: #selector(userDidPinch(_ : )))
+        //        pinch.indexPath = indexPath
+        pinch.delegate = self
+        contentView.addGestureRecognizer(pinch)
+        //旋转手势
+        let rotate = UIRotationGestureRecognizer.init(target: self, action: #selector(userDidRoate(_:)))
+        rotate.delegate = self
+        contentView.addGestureRecognizer(rotate)
+    }
+    
+    @objc func userDidRoate(_ recognizer : UIRotationGestureRecognizer) {
+        if (self.rotateCallback != nil) {
+            self.rotateCallback!(recognizer)
+        }
+    }
+    
+    @objc func userDidPinch(_ recognizer : FEPhotoIndexPinchGestureRecognizer) {
+        if (self.pinchCallback != nil) {
+            self.pinchCallback!(recognizer,self.imageContainer)
+        }
+        
     }
     
     /// 初始化完成时调用，空实现。子类可重写本方法以作进一步初始化
@@ -98,7 +138,6 @@ class FEPhotoOverViewCell: UICollectionViewCell {
         imageView.frame = fitFrame
         imageContainer.setZoomScale(1.0, animated: false)
     }
-    
 }
 
 extension FEPhotoOverViewCell {
@@ -114,9 +153,10 @@ extension FEPhotoOverViewCell {
     
     /// 计算图片适合的size
     var fitSize: CGSize {
-        guard let image = imageView.image else {
-            return CGSize.zero
-        }
+//        guard let image = imageView.image else {
+//            return CGSize.zero
+//        }
+        let image = CGRect.init(x: 0, y: 0, width: self.photo?.orginImageSize.width ?? 0.1, height: self.photo?.orginImageSize.height ?? 0.1)
         var width: CGFloat
         var height: CGFloat
         if imageContainer.bounds.width < imageContainer.bounds.height {
@@ -146,7 +186,7 @@ extension FEPhotoOverViewCell {
     }
     
     /// 复位ImageView
-    private func resetImageView() {
+    func resetImageView() {
         // 如果图片当前显示的size小于原size，则重置为原size
         let size = fitSize
         let needResetSize = imageView.bounds.size.width < size.width
@@ -173,6 +213,7 @@ extension FEPhotoOverViewCell {
 //        if (self.imageContainer.zoomScale != 1.0) {
 //            return
 //        }
+        
         switch pan.state {
         case .began:
             beganFrame = imageView.frame
@@ -188,6 +229,7 @@ extension FEPhotoOverViewCell {
             if !isDown {
                 resetImageView()
             }
+            print(pan.state)
         default:
             resetImageView()
         }
@@ -259,6 +301,10 @@ extension FEPhotoOverViewCell: UIScrollViewDelegate {
     public func scrollViewDidZoom(_ scrollView: UIScrollView) {
         imageView.center = resettingCenter
     }
+    
+//    func scrollViewDidEndZooming(_ scrollView: UIScrollView, with view: UIView?, atScale scale: CGFloat) {
+//
+//    }
 }
 
 
@@ -267,11 +313,40 @@ extension FEPhotoOverViewCell: UIScrollViewDelegate {
 //
 
 extension FEPhotoOverViewCell: UIGestureRecognizerDelegate {
+  
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        var ispop = false
+        if (self.isPop != nil) {
+            ispop = self.isPop!()
+        }
+        if (ispop) {
+            if (gestureRecognizer is FEPhotoIndexPinchGestureRecognizer) {
+                return true
+            } else {
+                return false
+            }
+        } else {
+            if (gestureRecognizer is FEPhotoIndexPinchGestureRecognizer) {
+                if (gestureRecognizer is FEPhotoIndexPinchGestureRecognizer && self.imageContainer.zoomScale == 1.0) {
+                    return true
+                } else {
+                    return false
+                }
+            }
+        }
+        return true
+    }
+  
     open override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         // 只响应pan手势
         guard let pan = gestureRecognizer as? UIPanGestureRecognizer else {
             return true
         }
+        
         if let _ = gestureRecognizer as? UIPanGestureRecognizer {
             //放大的情况下不相应pan手势
             if(self.imageContainer.zoomScale != 1) {

@@ -5,4 +5,5 @@ target 'FEPhotos' do
   use_frameworks!
   pod 'SwifterSwift'
   pod 'SnapKit'
+  pod 'Kingfisher'
 end

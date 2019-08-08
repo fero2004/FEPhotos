@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import Kingfisher
 
-class FEPhotoOverViewController: UIViewController, FEAnimatorDelegate,UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout{
+class FEPhotoOverViewController: UIViewController, FEAnimatorDelegate,UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout,UICollectionViewDataSourcePrefetching{
 
     //手势交互
     var transition : FEPhotoOverviewAnimator?
@@ -23,6 +24,14 @@ class FEPhotoOverViewController: UIViewController, FEAnimatorDelegate,UICollecti
     let thumbnailView = PhotoOverviewThumbnailView()
     let toolBar = PhotoOverviewToolBar()
     
+//    var doPopAnimate : Bool = false
+    
+    /// 是否需要遮盖状态栏。默认false
+    open var isNeedCoverStatusBar = false
+    
+    /// 保存原windowLevel
+    open var originWindowLevel: UIWindow.Level?
+    var lastPoint = CGPoint.zero
     // 表示了当前显示图片的序号，从0开始计数
     open var pageIndex: Int = 0 {
         didSet {
@@ -51,6 +60,8 @@ class FEPhotoOverViewController: UIViewController, FEAnimatorDelegate,UICollecti
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.isPagingEnabled = true
         collectionView.alwaysBounceVertical = false
+        collectionView.isPrefetchingEnabled=true    //预取开关
+        collectionView.prefetchDataSource=self   //预取数据源
         return collectionView
     }()
     
@@ -80,6 +91,18 @@ class FEPhotoOverViewController: UIViewController, FEAnimatorDelegate,UICollecti
         
         thumbnailView.selectedPhoto = self.selectedPhoto
         thumbnailView.photos = self.photos
+        thumbnailView.didEndDeceleratingBlock = {[weak self] in
+            if let cell = self?.collectionView.cellForItem(at: IndexPath.init(row: self?.pageIndex ?? 0, section: 0)) as? FEPhotoOverViewCell {
+                let data = self?.photos[self?.pageIndex ?? 0]
+                cell.imageView.kf.setImage(with: LocalFileImageDataProvider.init(fileURL: URL.init(fileURLWithPath: Bundle.main.path(forResource: data?.orginImagePath!, ofType: nil)!)),
+                                           placeholder: cell.imageView.image,
+                                           options: [.loadDiskFileSynchronously],
+                                           progressBlock: nil,
+                                           completionHandler: { (image) in
+                                            cell.setNeedsLayout()
+                })
+            }
+        }
         view.addSubview(thumbnailView)
         view.addSubview(toolBar)
         let item1 = UIBarButtonItem.init(barButtonSystemItem: .action, target: self, action: #selector(upload))
@@ -101,10 +124,10 @@ class FEPhotoOverViewController: UIViewController, FEAnimatorDelegate,UICollecti
             make.right.equalTo(self.view.safeAreaLayoutGuide.snp.right)
             make.height.equalTo(44)
         }
-        self.thumbnailView.didSelectPhoto = { (p,animated,contact) in
-            self.selectedPhoto = p
-            self.pageIndex = self.photos.firstIndex(of: p)!
-            self.scrollToItem(self.pageIndex, at: .left, animated: animated,contact:contact)
+        self.thumbnailView.didSelectPhoto = { [weak self](p,animated,contact) in
+            self?.selectedPhoto = p
+            self?.pageIndex = self?.photos.firstIndex(of: p)! ?? 0
+            self?.scrollToItem(self?.pageIndex ?? 0, at: .left, animated: animated,contact:contact)
         }
     }
     
@@ -125,10 +148,12 @@ class FEPhotoOverViewController: UIViewController, FEAnimatorDelegate,UICollecti
         let index = pageIndex
         setLayout()
         self.thumbnailView.setNeedsLayout()
-        collectionView.reloadData {
-            self.collectionView.layoutIfNeeded()
-            self.scrollToItem(index, at: .left, animated: false)
-            self.collectionView.layoutIfNeeded()
+        if (self.transition == nil) {
+            collectionView.reloadData { [weak self] in
+                self?.collectionView.layoutIfNeeded()
+                self?.scrollToItem(index, at: .left, animated: false)
+                self?.collectionView.layoutIfNeeded()
+            }
         }
     }
     
@@ -198,18 +223,201 @@ class FEPhotoOverViewController: UIViewController, FEAnimatorDelegate,UICollecti
         collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: photoSpacing)
     }
     
+    deinit {
+        print("deinit")
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+//        for indePath in indexPaths {
+//            let data = self.photos[indePath.row]
+//            LocalFileImageDataProvider.init(fileURL: URL.init(fileURLWithPath: Bundle.main.path(forResource: data.orginImagePath!, ofType: nil)!))
+//        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
+//        for indePath in indexPaths {
+//            let data = self.photos[indePath.row]
+//            let cache = ImageCache.default
+////            cache.removeImage(forKey: data.orginImagePath!)
+//            let key1 = URL.init(fileURLWithPath: Bundle.main.path(forResource: data.orginImagePath!, ofType: nil)!).absoluteString
+//            cache.removeImage(forKey: key1)
+//        }
+    }
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
          return self.photos.count
     }
     
+//    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+//        let cell1 = cell as? FEPhotoOverViewCell
+//        cell1?.imageView.image = nil
+//    }
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let data = self.photos[indexPath.row]
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FEPhotoOverViewCell", for: indexPath) as! FEPhotoOverViewCell
-        cell.imageView.image = data.orginImage
-        cell.setNeedsLayout()
+        cell.photo = data
+//        cell.imageView.image = nil
+//        cell.imageView.image = data.orginImage
+//        cell.imageView.kf.cancelDownloadTask()
+        let layout =  self.thumbnailView.collectionView.collectionViewLayout as! FEphotoOverviewThumbnailViewFlowLayout
+        if (layout.normalLayout) {
+            cell.imageView.kf.setImage(with: LocalFileImageDataProvider.init(fileURL: URL.init(fileURLWithPath: Bundle.main.path(forResource: data.middleImagePath!, ofType: nil)!)),
+                                       placeholder: nil,
+                                       options: [.loadDiskFileSynchronously],
+                                       progressBlock: nil,
+                                       completionHandler: { (image) in
+                                        cell.setNeedsLayout()
+            })
+        } else {
+            weak var tempcell = cell
+            cell.imageView.kf.setImage(with: LocalFileImageDataProvider.init(fileURL: URL.init(fileURLWithPath: Bundle.main.path(forResource: data.orginImagePath!, ofType: nil)!)),
+                                       placeholder: nil,
+                                       options: [.loadDiskFileSynchronously],
+                                       progressBlock: nil,
+                                       completionHandler: { (image) in
+//                                        switch image {
+//                                        case .success(let value):
+////                                            cell.imageView.image = value.image
+//                                            cell.setNeedsLayout()
+//                                            break
+//                                        case .failure(_):
+//                                            print("failure")
+//                                            break
+//                                        }
+                                        tempcell?.setNeedsLayout()
+            })
+        }
+//        }
+//        cell.setNeedsLayout()
+        
+        // 单击
+        cell.clickCallback = { _ in
+//            self.dismiss()
+        }
+        // 拖
+        cell.panChangedCallback = { [weak self] scale in
+//            // 实测用scale的平方，效果比线性好些
+//            let alpha = scale * scale
+//            self.browser?.transDelegate.maskAlpha = alpha
+//            // 半透明时重现状态栏，否则遮盖状态栏
+//            self.coverStatusBar(scale > 0.95)
+            if (self?.thumbnailView.collectionView.isDecelerating == true) {
+                return
+            }
+            if (self?.transition == nil) {
+                self?.transition = FEPhotoOverviewAnimator()
+                self?.transition!.operation = UINavigationController.Operation.pop
+                self?.transition!.indexPath = indexPath
+                self?.transition!.popType = .pan
+                self?.navigationController?.popViewController(animated: true)
+            }
+            self?.transition?.update(scale * scale)
+            self?.coverStatusBar(scale > 0.95)
+            self?.collectionView.isScrollEnabled = false
+          
+        }
+        // 拖完松手
+        cell.panReleasedCallback = { [weak self] isDown in
+            if isDown {
+                self?.transition?.finish()
+            } else {
+                self?.collectionView.isScrollEnabled = true
+                self?.transition?.cancel()
+                self?.transition = nil
+                self?.coverStatusBar(true)
+            }
+        }
+        // 长按
+        weak var weakCell = cell
+        cell.longPressedCallback = { gesture in
+//            if let browser = self.browser {
+//                self.longPressedCallback?(browser, indexPath.item, weakCell?.imageView.image, gesture)
+//            }
+        }
+        
+        // 捏合
+        cell.pinchCallback = { [weak self](gesture,scrollView) in
+            //判断是否要pop
+            self?.canPop(gesture, scrollView, weakCell!,indexPath)
+        }
+        
+        //旋转
+        cell.rotateCallback = { [weak self](recognizer) in
+            if recognizer.state == .began || recognizer.state == .changed {
+                if (self?.transition != nil) {
+                    self?.transition?.angle = recognizer.rotation
+                }
+            }
+//            recognizer.rotation = 0
+        }
+        cell.isPop = { [weak self]() in
+            if (self?.transition != nil) {
+                return true
+            }
+            return false
+        }
         return cell
     }
+    
+    func canPop(_ recognizer:FEPhotoIndexPinchGestureRecognizer,_ scrollview: UIScrollView,_ cell: FEPhotoOverViewCell, _ indexPath: IndexPath) {
+        if (recognizer.state == .began) {
+            if (recognizer.scale < 1) {
+                self.transition = FEPhotoOverviewAnimator()
+                self.transition!.operation = UINavigationController.Operation.pop
+                self.transition!.popType = .pinch
+                self.transition!.indexPath = indexPath
+                self.lastPoint = recognizer.location(in: self.view)
+                self.navigationController?.popViewController(animated: true)
+                self.collectionView.isScrollEnabled = false
+            } else {
+                recognizer.cancelsTouchesInView = true
+            }
+        } else if(recognizer.state == .changed) {
+            if (recognizer.numberOfTouches < 2) {
+                recognizer.isEnabled = false
+                recognizer.isEnabled = true
+            }
+            let point = recognizer.location(in: self.view)
+            self.transition?.scale = recognizer.scale
+            self.transition?.changedPoint = CGPoint.init(x: self.lastPoint.x - point.x, y: self.lastPoint.y - point.y)
+            self.transition?.update(1 - recognizer.scale)
+            self.lastPoint = point
+//            if let view = recognizer.view {
+//                let pinchCenter = CGPoint(x: recognizer.location(in: view).x - view.bounds.midX,
+//                                          y: recognizer.location(in: view).y - view.bounds.midY)
+//                let transform = view.transform.translatedBy(x: pinchCenter.x, y: pinchCenter.y)
+//                view.transform = transform
+//            }
+        } else if (recognizer.state == .ended || recognizer.state == .cancelled || recognizer.state == .failed) {
+            if (recognizer.scale < 0.95) {
+                self.transition?.finish()
+            } else {
+                cell.resetImageView()
+                self.transition?.cancel()
+            }
+            self.collectionView.isScrollEnabled = true
+            self.transition = nil
+        }
+    }
 
+    /// 遮盖状态栏。以改变windowLevel的方式遮盖
+    /// - parameter cover: true-遮盖；false-不遮盖
+    open func coverStatusBar(_ cover: Bool) {
+        guard isNeedCoverStatusBar else {
+            return
+        }
+        guard let window = UIApplication.shared.keyWindow else {
+            return
+        }
+        if originWindowLevel == nil {
+            originWindowLevel = window.windowLevel
+        }
+        guard let originLevel = originWindowLevel else {
+            return
+        }
+        window.windowLevel = cover ? .statusBar : originLevel
+    }
 
     /*
     // MARK: - Navigation

@@ -20,16 +20,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         } else {
             // Fallback on earlier versions
-            let photos = FECommon.buildData()
-            // Override point for customization after application launch.
-            let tab = FEBaseTabBarViewController()
-            let photo = FEPhotoCollectionController(nibName: "FEPhotoCollectionController", bundle: nil)
-            photo.controllerType = .root
-            photo.photos = photos
-            let nav = FEBaseNavigationController.init(rootViewController: photo)
-            nav.delegate = navDelegate
-            tab.viewControllers = [nav]
-            self.window?.rootViewController = tab
+//            let photos = FECommon.buildData()
+//            // Override point for customization after application launch.
+//            let tab = FEBaseTabBarViewController()
+//            let photo = FEPhotoCollectionController(nibName: "FEPhotoCollectionController", bundle: nil)
+//            photo.controllerType = .root
+//            photo.photos = photos
+//            let nav = FEBaseNavigationController.init(rootViewController: photo)
+//            nav.delegate = navDelegate
+//            tab.viewControllers = [nav]
+//            self.window?.rootViewController = tab
+            FECommon.initWindow(navDelegate: navDelegate, window: window)
         }
         return true
     }
@@ -56,7 +57,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
-
-
 }
 

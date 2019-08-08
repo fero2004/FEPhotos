@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 enum FEPhotoAnimatorRowType {
     //adjoinSection 紧靠sectionheader的第一行row
@@ -322,6 +323,12 @@ class FEPhotoCollectionViewAnimator: NSObject,UIViewControllerAnimatedTransition
                     // 防止动画切换太生硬,这里加一个toitem的imageview,做一个切换的动画
                     if(item.type == .fromAndTo) {
                         toImageView = UIImageView.init(image: item.to.photoData!.smallImage)
+//                        toImageView = UIImageView()
+//                        toImageView?.kf.setImage(with: LocalFileImageDataProvider.init(fileURL: URL.init(fileURLWithPath: Bundle.main.path(forResource: item.to.photoData!.smallImagePath!, ofType: nil)!)),
+//                                              placeholder: nil,
+//                                              options: [.backgroundDecode],
+//                                              progressBlock: nil,
+//                                              completionHandler: nil)
                         toImageView?.frame = CGRect.init(x: 0, y: 0, width: saveSize.width, height: saveSize.height)
                         toImageView?.alpha = 1
                         toImageView?.clipsToBounds = true
@@ -755,7 +762,7 @@ class FEPhotoCollectionViewAnimator: NSObject,UIViewControllerAnimatedTransition
                 let (fromRowIndex,toRowIndex,startIndex) =  self.mergeToRowsToFromRows(fromRows: fromRows, toRows: toRows,fromViewController: fromViewController,toViewController: toViewController)
                 //这里要先做to的动画,如果先做from的动画,from的cell frame变化了会影响to的cell位置
                 self.doPushAnimateInToViewController(fromRows: fromRows, toRows: toRows,fromViewController: fromViewController,toViewController: toViewController,fromRowIndex: fromRowIndex,toRowIndex: toRowIndex,startIndex: startIndex)
-                // from动画
+//                // from动画
                 self.doPushAnimateInfromViewController(fromRows: fromRows, toRows: toRows,fromViewController: fromViewController,toViewController: toViewController,fromRowIndex: fromRowIndex)
                 
                 UIView.animate(withDuration: self.animationDuration,

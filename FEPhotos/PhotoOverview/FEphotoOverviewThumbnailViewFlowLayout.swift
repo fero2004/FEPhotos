@@ -59,7 +59,9 @@ class FEphotoOverviewThumbnailViewFlowLayout: UICollectionViewFlowLayout {
     var photos : [FEPhotoCellData] = [FEPhotoCellData]()
     var normalLayout : Bool = false
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
-        guard let array = super.layoutAttributesForElements(in: rect) else { return nil }
+        guard let array = super.layoutAttributesForElements(in: rect) else {
+            return nil
+        }
         if (normalLayout) {
             var orginReact = [CGRect]()
             var x : CGFloat = 0.0
@@ -72,7 +74,6 @@ class FEphotoOverviewThumbnailViewFlowLayout: UICollectionViewFlowLayout {
             }
             return array
         }
-        
         if let currect = self.currect, let currectPersent = self.currectPersent, let nextPersent = self.nextPersent {
             //完全显示时候的Widths
             var pesent_1_Widths = [CGFloat]()
@@ -82,7 +83,9 @@ class FEphotoOverviewThumbnailViewFlowLayout: UICollectionViewFlowLayout {
             
             for i in 0...self.photos.count - 1 {
                 let photo = photos[i]
-                let fitSize = CGSize.init(width: photo.orginImage!.size.width, height: photo.orginImage!.size.height)
+                //第一次photo.orginImageSize会卡,因为UIImage.init(contentsOfFile: path!)大量循环调用会卡线程
+                //把这个计算orginImageSize放在fecoom.builddata里了,这里就不慢了
+                let fitSize = CGSize.init(width: photo.orginImageSize.width, height: photo.orginImageSize.height)
                 let pesent_1_Width : CGFloat = itemSize.height / (fitSize.height / fitSize.width)
                 //图片实际显示的宽度
                 pesent_1_Widths.append(pesent_1_Width)
@@ -250,6 +253,9 @@ class FEphotoOverviewThumbnailViewFlowLayout: UICollectionViewFlowLayout {
     }
     
     override func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
+        if (normalLayout) {
+            return false
+        }
         return true
     }
     

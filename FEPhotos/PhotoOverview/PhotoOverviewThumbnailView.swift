@@ -8,12 +8,15 @@
 
 import UIKit
 import SnapKit
+import Kingfisher
 
-class PhotoOverviewThumbnailView: UIView, UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout{
+class PhotoOverviewThumbnailView: UIView, UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout,UICollectionViewDataSourcePrefetching{
     
     var selectedPhoto : FEPhotoCellData?
     
     var didSelectPhoto : ((FEPhotoCellData,Bool,Bool) -> ())?
+    
+    var didEndDeceleratingBlock : (() -> ())?
     
     //原始数据
     var photos : [FEPhotoCellData] = [FEPhotoCellData]()
@@ -35,7 +38,9 @@ class PhotoOverviewThumbnailView: UIView, UICollectionViewDataSource,UICollectio
 //        collectionView.isPagingEnabled = true
 //        collectionView.alwaysBounceVertical = false
         collectionView.delegate = self
-        collectionView.dataSource = self;
+        collectionView.dataSource = self
+        collectionView.isPrefetchingEnabled=true    //预取开关
+        collectionView.prefetchDataSource=self   //预取数据源
         return collectionView
     }()
     
@@ -74,8 +79,15 @@ class PhotoOverviewThumbnailView: UIView, UICollectionViewDataSource,UICollectio
         collectionView.register(PhotoOverviewThumbnailCell.self, forCellWithReuseIdentifier: "PhotoOverviewThumbnailCell")
         self.addSubview(self.collectionView)
         self.collectionView.snp.makeConstraints { (make) in
-            make.edges.equalTo(UIEdgeInsets.zero);
+            make.edges.equalTo(UIEdgeInsets.zero)
         }
+        
+        let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .extraLight))
+        self.insertSubview(blurView, belowSubview: collectionView)
+        blurView.snp.makeConstraints { (make) in
+            make.edges.equalTo(UIEdgeInsets.zero)
+        }
+        self.backgroundColor = .clear
     }
     
     private func setLayout() {
@@ -108,8 +120,13 @@ class PhotoOverviewThumbnailView: UIView, UICollectionViewDataSource,UICollectio
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let data = self.photos[indexPath.row]
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotoOverviewThumbnailCell", for: indexPath) as! PhotoOverviewThumbnailCell
-        cell.imageView.image = data.smallImage
-        cell.setNeedsLayout()
+//        cell.imageView.image = data.smallImage
+        cell.imageView.kf.setImage(with: LocalFileImageDataProvider.init(fileURL: URL.init(fileURLWithPath: Bundle.main.path(forResource: data.middleImagePath!, ofType: nil)!)),
+                                   placeholder: nil,
+                                   options: [.loadDiskFileSynchronously],
+                                   progressBlock: nil,
+                                   completionHandler: nil)
+//        cell.setNeedsLayout()
         return cell
     }
     
@@ -120,11 +137,43 @@ class PhotoOverviewThumbnailView: UIView, UICollectionViewDataSource,UICollectio
         }
     }
     
+    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+//        for indePath in indexPaths {
+//            let data = self.photos[indePath.row]
+//            LocalFileImageDataProvider.init(fileURL: URL.init(fileURLWithPath: Bundle.main.path(forResource: data.smallImagePath!, ofType: nil)!))
+//        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
+//        for indePath in indexPaths {
+//            let data = self.photos[indePath.row]
+//            let cache = ImageCache.default
+//            let key = URL.init(fileURLWithPath: Bundle.main.path(forResource: data.smallImagePath!, ofType: nil)!).absoluteString
+//            let key1 = URL.init(fileURLWithPath: Bundle.main.path(forResource: data.orginImagePath!, ofType: nil)!).absoluteString
+//            cache.removeImage(forKey: key)
+//            cache.removeImage(forKey: key1)
+//        }
+    }
+    
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        self.flowLayout.normalLayout = true
-        self.collectionView.performBatchUpdates({
-            self.flowLayout.invalidateLayout()
-        }) { (b) in
+//        // 清除
+//        cache.clearDiskCache()
+//        cache.clearMemoryCache()
+//
+//        cache.clearDiskCache {
+//        }
+//        // 清除过期缓存
+//        cache.cleanExpiredDiskCache()
+//        cache.cleanExpiredDiskCache {
+//        }
+//        cache.backgroundCleanExpiredDiskCache()// 后台清理，但不需要回调
+        
+        if (self.flowLayout.normalLayout == false) {
+            self.flowLayout.normalLayout = true
+            self.collectionView.performBatchUpdates({
+                self.flowLayout.invalidateLayout()
+            }) { (b) in
+            }
         }
     }
     
@@ -133,6 +182,9 @@ class PhotoOverviewThumbnailView: UIView, UICollectionViewDataSource,UICollectio
         self.collectionView.performBatchUpdates({
             self.flowLayout.invalidateLayout()
         }) { (b) in
+        }
+        if (self.didEndDeceleratingBlock != nil) {
+            self.didEndDeceleratingBlock!()
         }
     }
     

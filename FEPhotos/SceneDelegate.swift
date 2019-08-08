@@ -16,7 +16,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     @available(iOS 13.0, *)
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        let photos = FECommon.buildData()
+       
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
@@ -25,14 +25,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         } else {
             // Fallback on earlier versions
         }
-        let tab = FEBaseTabBarViewController()
-        let photo = FEPhotoCollectionController(nibName: "FEPhotoCollectionController", bundle: nil)
-        photo.controllerType = .root
-        photo.photos = photos
-        let nav = FEBaseNavigationController.init(rootViewController: photo)
-        nav.delegate = navDelegate
-        tab.viewControllers = [nav]
-        self.window?.rootViewController = tab
+//         let photos = FECommon.buildData()
+//        let tab = FEBaseTabBarViewController()
+//        let photo = FEPhotoCollectionController(nibName: "FEPhotoCollectionController", bundle: nil)
+//        photo.controllerType = .root
+//        photo.photos = photos
+//        let nav = FEBaseNavigationController.init(rootViewController: photo)
+//        nav.delegate = navDelegate
+//        tab.viewControllers = [nav]
+//        self.window?.rootViewController = tab
+        FECommon.initWindow(navDelegate: navDelegate, window: window)
     }
 
     @available(iOS 13.0, *)

@@ -11,7 +11,7 @@ import UIKit
 extension UICollectionView {
     var fe_contentInsert : UIEdgeInsets! {
         get {
-            if #available(iOS 13.0, *) {
+            if #available(iOS 11.0, *) {
                 return self.adjustedContentInset
             } else {
                 return self.contentInset
