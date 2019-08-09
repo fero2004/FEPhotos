@@ -13,6 +13,10 @@ class FECommon: NSObject {
 //    static let NavBarHeight : CGFloat = UIApplication.shared.keyWindow!.safeAreaInsets.top + 44.0
     static let TabBarHeight : CGFloat = UIApplication.shared.keyWindow!.safeAreaInsets.bottom + 49.0
     
+    static func getLocalFileImageDataProvider(_ path: String) -> LocalFileImageDataProvider {
+        return LocalFileImageDataProvider.init(fileURL: URL.init(fileURLWithPath: Bundle.main.path(forResource: path, ofType: nil)!))
+    }
+    
     static func buildData() -> [FEPhotoCellData] {
         let year = [2019,2018,2017]
         let month = [1,2,3,4,5,6,7,8,9,10,11,12]
@@ -23,8 +27,8 @@ class FECommon: NSObject {
             day.append(i)
         }
         var photos = [FEPhotoCellData]()
-        for _ in 1...1 {
-            for i in 1...256 {
+        for _ in 1...6 {
+            for i in 1...1084 {
                 let data = FEPhotoCellData()
                 let y = year.randomElement()
                 let m = month.randomElement()
@@ -89,6 +93,21 @@ class FECommon: NSObject {
                 }
             }
         }
+    }
+    
+    static func clearCache() {
+        let cache = ImageCache.default
+        // 清除
+        cache.clearDiskCache()
+        cache.clearMemoryCache()
+        
+        cache.clearDiskCache {
+        }
+        // 清除过期缓存
+        cache.cleanExpiredDiskCache()
+        cache.cleanExpiredDiskCache {
+        }
+        cache.backgroundCleanExpiredDiskCache()// 后台清理，但不需要回调
     }
     
     static func initWindow(navDelegate: FENavigationControllerDelegate,window: UIWindow?) {

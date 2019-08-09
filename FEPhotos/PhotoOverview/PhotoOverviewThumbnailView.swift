@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import Kingfisher
 
-class PhotoOverviewThumbnailView: UIView, UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout,UICollectionViewDataSourcePrefetching{
+class PhotoOverviewThumbnailView: UIView, UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout{
     
     var selectedPhoto : FEPhotoCellData?
     
@@ -18,6 +18,7 @@ class PhotoOverviewThumbnailView: UIView, UICollectionViewDataSource,UICollectio
     
     var didEndDeceleratingBlock : (() -> ())?
     
+    var isSelectAction : Bool = false
     //原始数据
     var photos : [FEPhotoCellData] = [FEPhotoCellData]()
     
@@ -39,8 +40,8 @@ class PhotoOverviewThumbnailView: UIView, UICollectionViewDataSource,UICollectio
 //        collectionView.alwaysBounceVertical = false
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.isPrefetchingEnabled=true    //预取开关
-        collectionView.prefetchDataSource=self   //预取数据源
+//        collectionView.isPrefetchingEnabled=true    //预取开关
+//        collectionView.prefetchDataSource=self   //预取数据源
         return collectionView
     }()
     
@@ -50,7 +51,7 @@ class PhotoOverviewThumbnailView: UIView, UICollectionViewDataSource,UICollectio
         self.flowLayout.currectPersent = currectPersent
         self.flowLayout.next = next
         self.flowLayout.nextPersent = nextPersent
-        if (self.collectionView.isDragging) {
+        if (self.collectionView.isDragging || self.isSelectAction) {
             return
         }
         self.flowLayout.normalLayout = false
@@ -101,17 +102,24 @@ class PhotoOverviewThumbnailView: UIView, UICollectionViewDataSource,UICollectio
         fatalError("init(coder:) has not been implemented")
     }
     
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-//        let data = self.photos[indexPath.row]
-//        let photo = self.selectedPhoto!
-//        let fitSize = CGSize.init(width: photo.orginImage!.size.width, height: photo.orginImage!.size.height)
-//        let pesent_1_Width : CGFloat = self.flowLayout.itemSize.height / (fitSize.height / fitSize.width)
-//        if (photo == data) {
-//            return CGSize.init(width: pesent_1_Width, height: self.frame.height)
-//        } else {
-//            return CGSize.init(width: self.frame.height / 2, height: self.frame.height)
-//        }
+//    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+////        for indePath in indexPaths {
+////            let data = self.photos[indePath.row]
+////            let _ = FECommon.getLocalFileImageDataProvider(data.middleImagePath!)
+////        }
 //    }
+//
+//    func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
+//        //        for indePath in indexPaths {
+//        //            let data = self.photos[indePath.row]
+//        //            let cache = ImageCache.default
+//        //            let key = URL.init(fileURLWithPath: Bundle.main.path(forResource: data.smallImagePath!, ofType: nil)!).absoluteString
+//        //            let key1 = URL.init(fileURLWithPath: Bundle.main.path(forResource: data.orginImagePath!, ofType: nil)!).absoluteString
+//        //            cache.removeImage(forKey: key)
+//        //            cache.removeImage(forKey: key1)
+//        //        }
+//    }
+
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return self.photos.count
@@ -120,54 +128,30 @@ class PhotoOverviewThumbnailView: UIView, UICollectionViewDataSource,UICollectio
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let data = self.photos[indexPath.row]
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotoOverviewThumbnailCell", for: indexPath) as! PhotoOverviewThumbnailCell
-//        cell.imageView.image = data.smallImage
-        cell.imageView.kf.setImage(with: LocalFileImageDataProvider.init(fileURL: URL.init(fileURLWithPath: Bundle.main.path(forResource: data.middleImagePath!, ofType: nil)!)),
+        cell.imageView.kf.setImage(with: FECommon.getLocalFileImageDataProvider(data.middleImagePath!),
                                    placeholder: nil,
                                    options: [.loadDiskFileSynchronously],
                                    progressBlock: nil,
                                    completionHandler: nil)
-//        cell.setNeedsLayout()
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let data = self.photos[indexPath.row]
         if (self.didSelectPhoto != nil && data != self.selectedPhoto) {
-            self.didSelectPhoto!(data,true,false)
+//            self.didSelectPhoto!(data,true,false)
+            self.isSelectAction = true
+            self.flowLayout.normalLayout = true
+            self.collectionView.performBatchUpdates({
+                self.flowLayout.invalidateLayout()
+            }) { (b) in
+            }
+            self.collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
         }
     }
     
-    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-//        for indePath in indexPaths {
-//            let data = self.photos[indePath.row]
-//            LocalFileImageDataProvider.init(fileURL: URL.init(fileURLWithPath: Bundle.main.path(forResource: data.smallImagePath!, ofType: nil)!))
-//        }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
-//        for indePath in indexPaths {
-//            let data = self.photos[indePath.row]
-//            let cache = ImageCache.default
-//            let key = URL.init(fileURLWithPath: Bundle.main.path(forResource: data.smallImagePath!, ofType: nil)!).absoluteString
-//            let key1 = URL.init(fileURLWithPath: Bundle.main.path(forResource: data.orginImagePath!, ofType: nil)!).absoluteString
-//            cache.removeImage(forKey: key)
-//            cache.removeImage(forKey: key1)
-//        }
-    }
     
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-//        // 清除
-//        cache.clearDiskCache()
-//        cache.clearMemoryCache()
-//
-//        cache.clearDiskCache {
-//        }
-//        // 清除过期缓存
-//        cache.cleanExpiredDiskCache()
-//        cache.cleanExpiredDiskCache {
-//        }
-//        cache.backgroundCleanExpiredDiskCache()// 后台清理，但不需要回调
-        
         if (self.flowLayout.normalLayout == false) {
             self.flowLayout.normalLayout = true
             self.collectionView.performBatchUpdates({
@@ -178,18 +162,27 @@ class PhotoOverviewThumbnailView: UIView, UICollectionViewDataSource,UICollectio
     }
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        self.flowLayout.normalLayout = false
-        self.collectionView.performBatchUpdates({
-            self.flowLayout.invalidateLayout()
-        }) { (b) in
+        self.collectionView.reloadData {
+            self.isSelectAction = false
+            self.flowLayout.normalLayout = false
+            self.collectionView.performBatchUpdates({
+                self.flowLayout.invalidateLayout()
+            }) { (b) in
+            }
+            if (self.didEndDeceleratingBlock != nil) {
+                self.didEndDeceleratingBlock!()
+            }
         }
-        if (self.didEndDeceleratingBlock != nil) {
-            self.didEndDeceleratingBlock!()
+    }
+    
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        if (self.isSelectAction) {
+            self.scrollViewDidEndDecelerating(scrollView)
         }
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if (self.collectionView.isDragging) {
+        if (self.flowLayout.normalLayout) {
             let indexPathsForVisibleItems = self.collectionView.indexPathsForVisibleItems
             let centerx = scrollView.contentOffset.x + scrollView.frame.width / 2
             for l in indexPathsForVisibleItems {

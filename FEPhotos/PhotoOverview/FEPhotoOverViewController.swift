@@ -9,7 +9,7 @@
 import UIKit
 import Kingfisher
 
-class FEPhotoOverViewController: UIViewController, FEAnimatorDelegate,UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout,UICollectionViewDataSourcePrefetching{
+class FEPhotoOverViewController: UIViewController, FEAnimatorDelegate,UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout{
 
     //手势交互
     var transition : FEPhotoOverviewAnimator?
@@ -60,8 +60,6 @@ class FEPhotoOverViewController: UIViewController, FEAnimatorDelegate,UICollecti
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.isPagingEnabled = true
         collectionView.alwaysBounceVertical = false
-        collectionView.isPrefetchingEnabled=true    //预取开关
-        collectionView.prefetchDataSource=self   //预取数据源
         return collectionView
     }()
     
@@ -93,14 +91,15 @@ class FEPhotoOverViewController: UIViewController, FEAnimatorDelegate,UICollecti
         thumbnailView.photos = self.photos
         thumbnailView.didEndDeceleratingBlock = {[weak self] in
             if let cell = self?.collectionView.cellForItem(at: IndexPath.init(row: self?.pageIndex ?? 0, section: 0)) as? FEPhotoOverViewCell {
-                let data = self?.photos[self?.pageIndex ?? 0]
-                cell.imageView.kf.setImage(with: LocalFileImageDataProvider.init(fileURL: URL.init(fileURLWithPath: Bundle.main.path(forResource: data?.orginImagePath!, ofType: nil)!)),
-                                           placeholder: cell.imageView.image,
-                                           options: [.loadDiskFileSynchronously],
-                                           progressBlock: nil,
-                                           completionHandler: { (image) in
-                                            cell.setNeedsLayout()
-                })
+                if let data = self?.photos[self?.pageIndex ?? 0] {
+                    cell.imageView.kf.setImage(with: FECommon.getLocalFileImageDataProvider(data.orginImagePath!),
+                                               placeholder: cell.imageView.image,
+                                               options: [.loadDiskFileSynchronously],
+                                               progressBlock: nil,
+                                               completionHandler: { (image) in
+                                                cell.setNeedsLayout()
+                    })
+                }
             }
         }
         view.addSubview(thumbnailView)
@@ -227,42 +226,17 @@ class FEPhotoOverViewController: UIViewController, FEAnimatorDelegate,UICollecti
         print("deinit")
     }
     
-    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-//        for indePath in indexPaths {
-//            let data = self.photos[indePath.row]
-//            LocalFileImageDataProvider.init(fileURL: URL.init(fileURLWithPath: Bundle.main.path(forResource: data.orginImagePath!, ofType: nil)!))
-//        }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
-//        for indePath in indexPaths {
-//            let data = self.photos[indePath.row]
-//            let cache = ImageCache.default
-////            cache.removeImage(forKey: data.orginImagePath!)
-//            let key1 = URL.init(fileURLWithPath: Bundle.main.path(forResource: data.orginImagePath!, ofType: nil)!).absoluteString
-//            cache.removeImage(forKey: key1)
-//        }
-    }
-    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
          return self.photos.count
     }
-    
-//    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-//        let cell1 = cell as? FEPhotoOverViewCell
-//        cell1?.imageView.image = nil
-//    }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let data = self.photos[indexPath.row]
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FEPhotoOverViewCell", for: indexPath) as! FEPhotoOverViewCell
         cell.photo = data
-//        cell.imageView.image = nil
-//        cell.imageView.image = data.orginImage
-//        cell.imageView.kf.cancelDownloadTask()
         let layout =  self.thumbnailView.collectionView.collectionViewLayout as! FEphotoOverviewThumbnailViewFlowLayout
         if (layout.normalLayout) {
-            cell.imageView.kf.setImage(with: LocalFileImageDataProvider.init(fileURL: URL.init(fileURLWithPath: Bundle.main.path(forResource: data.middleImagePath!, ofType: nil)!)),
+            cell.imageView.kf.setImage(with: FECommon.getLocalFileImageDataProvider(data.middleImagePath!),
                                        placeholder: nil,
                                        options: [.loadDiskFileSynchronously],
                                        progressBlock: nil,
@@ -271,25 +245,14 @@ class FEPhotoOverViewController: UIViewController, FEAnimatorDelegate,UICollecti
             })
         } else {
             weak var tempcell = cell
-            cell.imageView.kf.setImage(with: LocalFileImageDataProvider.init(fileURL: URL.init(fileURLWithPath: Bundle.main.path(forResource: data.orginImagePath!, ofType: nil)!)),
+            cell.imageView.kf.setImage(with: FECommon.getLocalFileImageDataProvider(data.orginImagePath!),
                                        placeholder: nil,
                                        options: [.loadDiskFileSynchronously],
                                        progressBlock: nil,
                                        completionHandler: { (image) in
-//                                        switch image {
-//                                        case .success(let value):
-////                                            cell.imageView.image = value.image
-//                                            cell.setNeedsLayout()
-//                                            break
-//                                        case .failure(_):
-//                                            print("failure")
-//                                            break
-//                                        }
                                         tempcell?.setNeedsLayout()
             })
         }
-//        }
-//        cell.setNeedsLayout()
         
         // 单击
         cell.clickCallback = { _ in
@@ -383,12 +346,6 @@ class FEPhotoOverViewController: UIViewController, FEAnimatorDelegate,UICollecti
             self.transition?.changedPoint = CGPoint.init(x: self.lastPoint.x - point.x, y: self.lastPoint.y - point.y)
             self.transition?.update(1 - recognizer.scale)
             self.lastPoint = point
-//            if let view = recognizer.view {
-//                let pinchCenter = CGPoint(x: recognizer.location(in: view).x - view.bounds.midX,
-//                                          y: recognizer.location(in: view).y - view.bounds.midY)
-//                let transform = view.transform.translatedBy(x: pinchCenter.x, y: pinchCenter.y)
-//                view.transform = transform
-//            }
         } else if (recognizer.state == .ended || recognizer.state == .cancelled || recognizer.state == .failed) {
             if (recognizer.scale < 0.95) {
                 self.transition?.finish()

@@ -322,13 +322,12 @@ class FEPhotoCollectionViewAnimator: NSObject,UIViewControllerAnimatedTransition
                     var toImageView : UIImageView?
                     // 防止动画切换太生硬,这里加一个toitem的imageview,做一个切换的动画
                     if(item.type == .fromAndTo) {
-                        toImageView = UIImageView.init(image: item.to.photoData!.smallImage)
-//                        toImageView = UIImageView()
-//                        toImageView?.kf.setImage(with: LocalFileImageDataProvider.init(fileURL: URL.init(fileURLWithPath: Bundle.main.path(forResource: item.to.photoData!.smallImagePath!, ofType: nil)!)),
-//                                              placeholder: nil,
-//                                              options: [.backgroundDecode],
-//                                              progressBlock: nil,
-//                                              completionHandler: nil)
+                        toImageView = UIImageView.init()
+                        toImageView?.kf.setImage(with: FECommon.getLocalFileImageDataProvider(item.to.photoData!.smallImagePath!),
+                                                 placeholder: nil,
+                                                 options: [.loadDiskFileSynchronously],
+                                                 progressBlock: nil,
+                                                 completionHandler: nil)
                         toImageView?.frame = CGRect.init(x: 0, y: 0, width: saveSize.width, height: saveSize.height)
                         toImageView?.alpha = 1
                         toImageView?.clipsToBounds = true

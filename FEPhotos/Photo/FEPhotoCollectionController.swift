@@ -98,7 +98,12 @@ class FEPhotoCollectionController: FEPhotoBaseCollectionController,UICollectionV
 
             self.longPressImageView = UIImageView.init(frame: CGRect.init(x: 0, y: 0, width: 65, height: 65))
             self.longPressImageView?.center = CGPoint.init(x: location.x, y: location.y - self.collectionView.contentOffset.y - 55)
-            self.longPressImageView?.image = photoData.bigImage
+//            self.longPressImageView?.image = photoData.bigImage
+            self.longPressImageView?.kf.setImage(with: FECommon.getLocalFileImageDataProvider(photoData.bigImagePath!),
+                              placeholder: nil,
+                              options: [.loadDiskFileSynchronously],
+                              progressBlock: nil,
+                              completionHandler: nil)
             self.longPressImageView?.contentMode = .scaleAspectFill
             self.longPressImageView?.clipsToBounds = true
             UIApplication.shared.keyWindow?.addSubview(self.longPressImageView!)
@@ -209,36 +214,26 @@ class FEPhotoCollectionController: FEPhotoBaseCollectionController,UICollectionV
         let photoData = sectionData.photos[indexPath.row]
         switch self.controllerType {
         case .root:
-//            DispatchQueue.global(qos: .background).async {
-//                UIGraphicsBeginImageContextWithOptions(cell.imageView.bounds.size, true, 0)
-//                photoData.smallImage?.draw(in: cell.imageView.bounds)
-//                let image =  UIGraphicsGetImageFromCurrentImageContext()
-//                UIGraphicsEndImageContext()
-//                DispatchQueue.main.async {
-//                    cell.imageView.image = image
-//                }
-//            }
-//            cell.imageView.image = photoData.smallImage
-//            cell.backgroundColor = UIColor.random
-            cell.imageView.kf.setImage(with: LocalFileImageDataProvider.init(fileURL: URL.init(fileURLWithPath: Bundle.main.path(forResource: photoData.smallImagePath!, ofType: nil)!)),
+            cell.imageView.kf.setImage(with: FECommon.getLocalFileImageDataProvider(photoData.smallImagePath!),
                                        placeholder: nil,
                                        options: [.loadDiskFileSynchronously],
                                        progressBlock: nil,
                                        completionHandler: nil)
             break
         case .step:
-//            cell.imageView.image = photoData.middleImage
-//            let cellRect = cell.contentView.convert(cell.contentView.bounds, to: UIScreen.main.coordinateSpace)
-//            if UIScreen.main.bounds.intersects(cellRect) {
-                cell.imageView.kf.setImage(with: LocalFileImageDataProvider.init(fileURL: URL.init(fileURLWithPath: Bundle.main.path(forResource: photoData.middleImagePath!, ofType: nil)!)),
-                                           placeholder: nil,
-                                           options: [.loadDiskFileSynchronously],
-                                           progressBlock: nil,
-                                           completionHandler: nil)
-//            }
+            cell.imageView.kf.setImage(with: FECommon.getLocalFileImageDataProvider(photoData.middleImagePath!),
+                                       placeholder: nil,
+                                       options: [.loadDiskFileSynchronously],
+                                       progressBlock: nil,
+                                       completionHandler: nil)
             break
         case .detail:
-            cell.imageView.image = photoData.bigImage
+            cell.imageView.kf.setImage(with: FECommon.getLocalFileImageDataProvider(photoData.bigImagePath!),
+                                       placeholder: nil,
+                                       options: [.loadDiskFileSynchronously],
+                                       progressBlock: nil,
+                                       completionHandler: nil)
+
             
             cell.imageView.isUserInteractionEnabled = true
             cell.imageView.removeGestureRecognizers()

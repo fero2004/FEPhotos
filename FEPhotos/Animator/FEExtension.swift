@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 extension UICollectionView {
     var fe_contentInsert : UIEdgeInsets! {
