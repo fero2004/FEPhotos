@@ -27,7 +27,7 @@ class FECommon: NSObject {
             day.append(i)
         }
         var photos = [FEPhotoCellData]()
-        for _ in 1...6 {
+        for _ in 1...1 {
             for i in 1...1084 {
                 let data = FEPhotoCellData()
                 let y = year.randomElement()
