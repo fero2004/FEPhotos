@@ -375,6 +375,7 @@ class FEPhotoOverViewController: UIViewController, FEAnimatorDelegate,UICollecti
         }
         window.windowLevel = cover ? .statusBar : originLevel
     }
+    
 
     /*
     // MARK: - Navigation

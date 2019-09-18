@@ -10,7 +10,7 @@ import UIKit
 import Kingfisher
 
 class FECommon: NSObject {
-//    static let NavBarHeight : CGFloat = UIApplication.shared.keyWindow!.safeAreaInsets.top + 44.0
+    static let NavBarHeight : CGFloat = UIApplication.shared.keyWindow!.safeAreaInsets.top + 44.0
     static let TabBarHeight : CGFloat = UIApplication.shared.keyWindow!.safeAreaInsets.bottom + 49.0
     
     static func getLocalFileImageDataProvider(_ path: String) -> LocalFileImageDataProvider {
@@ -28,7 +28,7 @@ class FECommon: NSObject {
         }
         var photos = [FEPhotoCellData]()
         for _ in 1...1 {
-            for i in 1...1084 {
+            for i in 1...256 {
                 let data = FEPhotoCellData()
                 let y = year.randomElement()
                 let m = month.randomElement()

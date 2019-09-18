@@ -25,6 +25,7 @@
 		190EE53522B600AE00E2A47E /* FEPhotoSectionHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 190EE53322B600AE00E2A47E /* FEPhotoSectionHeaderView.xib */; };
 		190EE53822B6121E00E2A47E /* FEPhotoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 190EE53622B6121E00E2A47E /* FEPhotoCell.swift */; };
 		190EE53922B6121E00E2A47E /* FEPhotoCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 190EE53722B6121E00E2A47E /* FEPhotoCell.xib */; };
+		190FBA3122FE6AE30072A5FA /* FEPhotoOverViewPullUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 190FBA3022FE6AE30072A5FA /* FEPhotoOverViewPullUpView.swift */; };
 		191002C422F5F2E300DE285D /* small_381.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1910FE8822F5F2DB00DE285D /* small_381.jpg */; };
 		191002C522F5F2E300DE285D /* small_395.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1910FE8922F5F2DB00DE285D /* small_395.jpg */; };
 		191002C622F5F2E300DE285D /* small_418.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1910FE8A22F5F2DB00DE285D /* small_418.jpg */; };
@@ -4422,6 +4423,7 @@
 		190EE53322B600AE00E2A47E /* FEPhotoSectionHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FEPhotoSectionHeaderView.xib; sourceTree = "<group>"; };
 		190EE53622B6121E00E2A47E /* FEPhotoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FEPhotoCell.swift; sourceTree = "<group>"; };
 		190EE53722B6121E00E2A47E /* FEPhotoCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FEPhotoCell.xib; sourceTree = "<group>"; };
+		190FBA3022FE6AE30072A5FA /* FEPhotoOverViewPullUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FEPhotoOverViewPullUpView.swift; sourceTree = "<group>"; };
 		1910000022F5F2DD00DE285D /* small_929.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = small_929.jpg; sourceTree = "<group>"; };
 		1910000122F5F2DD00DE285D /* small_726.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = small_726.jpg; sourceTree = "<group>"; };
 		1910000222F5F2DD00DE285D /* small_732.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = small_732.jpg; sourceTree = "<group>"; };
@@ -13309,6 +13311,7 @@
 				1913DB1022E1F9240096A7F1 /* PhotoOverviewToolBar.swift */,
 				1913DB1322E2184F0096A7F1 /* PhotoOverviewThumbnailCell.swift */,
 				1913174922E58E7400072D00 /* FEphotoOverviewThumbnailViewFlowLayout.swift */,
+				190FBA3022FE6AE30072A5FA /* FEPhotoOverViewPullUpView.swift */,
 			);
 			path = PhotoOverview;
 			sourceTree = "<group>";
@@ -17857,6 +17860,7 @@
 				190EE4FD22B5FFE800E2A47E /* ViewController.swift in Sources */,
 				190E389622B77F380091E8A3 /* FEPhotoCellData.swift in Sources */,
 				192942C122E06930000BB083 /* FEPhotoOverViewController.swift in Sources */,
+				190FBA3122FE6AE30072A5FA /* FEPhotoOverViewPullUpView.swift in Sources */,
 				1911EF3A22E0B2B90053E140 /* FEPhotoOverViewCell.swift in Sources */,
 				190EE4F922B5FFE800E2A47E /* AppDelegate.swift in Sources */,
 				19154AC122BA781400FF3067 /* FEPhotoCollectionViewAnimator.swift in Sources */,

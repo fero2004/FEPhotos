@@ -14,6 +14,10 @@ class FEPhotoIndexPinchGestureRecognizer: UIPinchGestureRecognizer {
     var indexPath : IndexPath?
 }
 
+class FEPhotoPanGestureRecognizer:UIPanGestureRecognizer {
+    
+}
+
 class FEPhotoCollectionController: FEPhotoBaseCollectionController,UICollectionViewDelegateFlowLayout,FEAnimatorDelegate,UIGestureRecognizerDelegate {
     
     var isDidAppear = false

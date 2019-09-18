@@ -14,8 +14,14 @@ class FEPhotoOverViewCell: UICollectionViewCell {
     /// ImageView
     open var imageView = UIImageView()
     
+//    var isPullUp : Bool = false
+    
+    var isShowDetail : Bool = false
+    
     var photo : FEPhotoCellData?
     
+    var pullUpView : FEPhotoOverViewPullUpView?
+    var isDissMissPullUpView : Bool = true
     /// 图片缩放容器
     open var imageContainer = UIScrollView()
     
@@ -92,7 +98,8 @@ class FEPhotoOverViewCell: UICollectionViewCell {
         singleTap.require(toFail: doubleTap)
         
         // 拖动手势
-        let pan = UIPanGestureRecognizer(target: self, action: #selector(onPan(_:)))
+        let pan = FEPhotoPanGestureRecognizer(target: self, action: #selector(onPan(_:)))
+        pan.cancelsTouchesInView = false
         pan.delegate = self
         pan.maximumNumberOfTouches = 1
         // 必须加在图片容器上。不能加在contentView上，否则长图下拉不能触发
@@ -210,28 +217,116 @@ extension FEPhotoOverViewCell {
         guard imageView.image != nil else {
             return
         }
-//        if (self.imageContainer.zoomScale != 1.0) {
-//            return
-//        }
-        
-        switch pan.state {
-        case .began:
-            beganFrame = imageView.frame
-            beganTouch = pan.location(in: imageContainer)
-        case .changed:
-            let result = panResult(pan)
-            imageView.frame = result.0
-            panChangedCallback?(result.1)
-        case .ended, .cancelled:
-            imageView.frame = panResult(pan).0
-            let isDown = pan.velocity(in: self).y > 0
-            self.panReleasedCallback?(isDown)
-            if !isDown {
+        let isPullUp_1 = pan.velocity(in: self).y < 0 && self.imageContainer.zoomScale == 1
+        let isPullUp_not_1 = pan.velocity(in: self).y < 0 && self.imageContainer.zoomScale != 1
+        let isPullDown_1 = pan.velocity(in: self).y > 0 && self.imageContainer.zoomScale == 1
+        let isPullDown_not_1 = pan.velocity(in: self).y > 0 && self.imageContainer.zoomScale != 1
+        var ispop = false
+        if (self.isPop != nil) {
+            ispop = self.isPop!()
+        }
+        if (((isPullDown_1 || isPullDown_not_1) && !isShowDetail) || ispop) {
+            switch pan.state {
+            case .began:
+                if let collectionView = self.superview as? UICollectionView {
+                    collectionView.isScrollEnabled = false
+                }
+                beganFrame = imageView.frame
+                beganTouch = pan.location(in: imageContainer)
+            case .changed:
+                let result = panResult(pan)
+                imageView.frame = result.0
+                panChangedCallback?(result.1)
+            case .ended, .cancelled:
+                imageView.frame = panResult(pan).0
+                let isDown = pan.velocity(in: self).y > 0
+                self.panReleasedCallback?(isDown)
+                if !isDown {
+                    resetImageView()
+                }
+                if let collectionView = self.superview as? UICollectionView {
+                    collectionView.isScrollEnabled = true
+                }
+            default:
                 resetImageView()
             }
-            print(pan.state)
-        default:
-            resetImageView()
+        }
+        else if (isPullUp_1 || isPullDown_1){
+            switch pan.state {
+            case .began:
+                if let collectionView = self.superview as? UICollectionView {
+                    collectionView.isScrollEnabled = false
+                }
+                isShowDetail = true
+                beganFrame = imageView.frame
+                beganTouch = pan.location(in: imageContainer)
+                if (isPullUp_1 && isDissMissPullUpView) {
+                    self.showPullUpView()
+                }
+            case .changed:
+                let result = panResult(pan)
+                imageView.center.y = result.0.midY
+                self.pullUpView?.frame = CGRect.init(x: 0, y: imageView.frame.maxY, width: self.frame.width, height: self.frame.height)
+                self.pullUpView?.changeContenInsert(insert: 0)
+            case .ended, .cancelled:
+                var height = imageView.frame.height
+                var frame = CGRect.zero
+                var offset : CGFloat = 0.0
+                if (imageView.frame.height < self.contentView.height) {
+                    frame = CGRect.init(x: imageView.frame.origin.x,
+                                            y: FECommon.NavBarHeight - height / 2,
+                                            width: imageView.width,
+                                            height: height)
+                    offset = (FECommon.NavBarHeight + height / 2)
+                } else {
+                    height = self.contentView.height
+                    frame = CGRect.init(x: imageView.frame.origin.x,
+                                            y: (FECommon.NavBarHeight + height / 2) - height,
+                                            width: imageView.width,
+                                            height: height)
+                    offset = (FECommon.NavBarHeight + height / 2)
+                }
+                if (isPullUp_1) {
+                    UIView.animate(withDuration: 0.2, animations: {
+                        self.imageView.frame = frame
+                        self.pullUpView?.frame = CGRect.init(x: 0, y: self.imageView.frame.maxY, width: self.frame.width, height: self.frame.height)
+
+                    }) { (b) in
+                        self.pullUpView?.frame = CGRect.init(x: 0, y: 0, width: self.frame.width, height: self.frame.height)
+                        self.pullUpView?.changeContenInsert(insert: offset)
+//                        self.imageContainer.isScrollEnabled = false
+                    }
+                } else {
+                    resetImageView()
+                    self.disMissPullUpView()
+                    isShowDetail = false
+                }
+                if let collectionView = self.superview as? UICollectionView {
+                    collectionView.isScrollEnabled = true
+                }
+            default:
+                resetImageView()
+            }
+        }
+    }
+    
+    func showPullUpView() {
+        isDissMissPullUpView = false
+        self.pullUpView?.removeFromSuperview()
+        self.pullUpView = nil
+        self.pullUpView = FEPhotoOverViewPullUpView.init(frame: CGRect.init(x: 0, y: self.frame.height, width: self.frame.width, height: self.frame.height))
+//        self.imageContainer.addSubview(self.pullUpView ?? UIView())
+        self.imageContainer.insertSubview(self.pullUpView ?? UIView(), belowSubview: self.imageView)
+        UIView.animate(withDuration: 0.2) {
+            self.pullUpView?.frame = CGRect.init(x: 0, y: self.imageView.frame.maxY, width: self.frame.width, height: self.frame.height)
+        }
+    }
+    
+    func disMissPullUpView() {
+        isDissMissPullUpView = true
+        UIView.animate(withDuration: 0.2) {
+            self.pullUpView?.frame = CGRect.init(x: 0, y: self.frame.maxY, width: self.frame.width, height: self.frame.height)
+            
         }
     }
     
@@ -315,6 +410,9 @@ extension FEPhotoOverViewCell: UIScrollViewDelegate {
 extension FEPhotoOverViewCell: UIGestureRecognizerDelegate {
   
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        if (otherGestureRecognizer.view is FETableView) {
+            return false
+        }
         return true
     }
     
@@ -346,16 +444,46 @@ extension FEPhotoOverViewCell: UIGestureRecognizerDelegate {
         guard let pan = gestureRecognizer as? UIPanGestureRecognizer else {
             return true
         }
-        
+
         if let _ = gestureRecognizer as? UIPanGestureRecognizer {
             //放大的情况下不相应pan手势
             if(self.imageContainer.zoomScale != 1) {
                 return false
             }
         }
+
         let velocity = pan.velocity(in: self)
         // 向上滑动时，不响应手势
         if velocity.y < 0 {
+            //向上滑动,显示下面的更多view
+            if(self.imageContainer.zoomScale == 1) {
+                //https://stackoverflow.com/questions/7100884/uipangesturerecognizer-only-vertical-or-horizontal/8603839
+                /*
+                 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
+                 {
+                 if ([gestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]]) {
+                 
+                 UIPanGestureRecognizer *panGesture = (UIPanGestureRecognizer *)gestureRecognizer;
+                 CGPoint velocity = [panGesture velocityInView:panGesture.view];
+                 
+                 double radian = atan(velocity.y/velocity.x);
+                 double degree = radian * 180 / M_PI;
+                 
+                 double thresholdAngle = 20.0;
+                 if (fabs(degree) > enableThreshold) {
+                 return NO;
+                 }
+                 }
+                 return YES;
+                 }
+                 */
+                //不是完全向上,手指有个角度,在这角度上响应向上的手势
+                let radian = atan2(velocity.y, velocity.x)
+                let degree = radian * 180.0 / Double.pi.cgFloat
+                if (abs(degree) > 60 && abs(degree) < 120) {
+                    return true
+                }
+            }
             return false
         }
         // 横向滑动时，不响应pan手势
