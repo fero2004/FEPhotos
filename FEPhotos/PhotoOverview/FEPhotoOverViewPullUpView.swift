@@ -50,6 +50,16 @@ class FEPhotoOverViewPullUpView: UIView,UITableViewDelegate,UITableViewDataSourc
         }
     }
     
+    var isShowUp : Bool = false
+    
+    var scrollOffset : CGFloat = 0
+    
+    var lastContentoffsety :  CGFloat =  0
+    
+    var changeContentOffsetBlock : ((CGFloat)->())?
+    
+    weak var cell : FEPhotoOverViewCell?
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.tableView.frame = CGRect.init(x: 0, y: 0, width: frame.width, height: frame.height)
@@ -57,7 +67,7 @@ class FEPhotoOverViewPullUpView: UIView,UITableViewDelegate,UITableViewDataSourc
         tableView.delegate = self
         tableView.dataSource = self
         self.addSubview(self.tableView)
-        self.tableView.backgroundColor = UIColor.red
+        self.tableView.backgroundColor = UIColor.white
     }
     override var frame: CGRect {
         didSet {
@@ -71,10 +81,22 @@ class FEPhotoOverViewPullUpView: UIView,UITableViewDelegate,UITableViewDataSourc
         if self.tableView.minInsert >= -insert {
             self.tableView.minInsert = -insert
         }
+        self.lastContentoffsety = self.tableView.contentOffset.y
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         print(scrollView.contentOffset)
+        if self.isShowUp {
+            self.changeContentOffsetBlock?(self.lastContentoffsety - scrollView.contentOffset.y)
+            self.lastContentoffsety = scrollView.contentOffset.y
+        }
+    }
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if scrollView.contentOffset.y < self.tableView.minInsert {
+            self.isShowUp = false
+            self.cell?.pullUpReset()
+        }
     }
     
     required init?(coder: NSCoder) {

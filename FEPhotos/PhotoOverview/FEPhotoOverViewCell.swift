@@ -117,12 +117,18 @@ class FEPhotoOverViewCell: UICollectionViewCell {
     }
     
     @objc func userDidRoate(_ recognizer : UIRotationGestureRecognizer) {
+        if self.pullUpView?.isShowUp ?? false {
+            return
+        }
         if (self.rotateCallback != nil) {
             self.rotateCallback!(recognizer)
         }
     }
     
     @objc func userDidPinch(_ recognizer : FEPhotoIndexPinchGestureRecognizer) {
+        if self.pullUpView?.isShowUp ?? false{
+            return
+        }
         if (self.pinchCallback != nil) {
             self.pinchCallback!(recognizer,self.imageContainer)
         }
@@ -268,45 +274,56 @@ extension FEPhotoOverViewCell {
                 imageView.center.y = result.0.midY
                 self.pullUpView?.frame = CGRect.init(x: 0, y: imageView.frame.maxY, width: self.frame.width, height: self.frame.height)
                 self.pullUpView?.changeContenInsert(insert: 0)
+                self.pullUpView?.changeContentOffsetBlock = nil
+                self.pullUpView?.isShowUp = false
+                self.imageContainer.pinchGestureRecognizer?.isEnabled = true
             case .ended, .cancelled:
-                var height = imageView.frame.height
-                var frame = CGRect.zero
-                var offset : CGFloat = 0.0
-                if (imageView.frame.height < self.contentView.height) {
-                    frame = CGRect.init(x: imageView.frame.origin.x,
-                                            y: FECommon.NavBarHeight - height / 2,
-                                            width: imageView.width,
-                                            height: height)
-                    offset = (FECommon.NavBarHeight + height / 2)
-                } else {
-                    height = self.contentView.height
-                    frame = CGRect.init(x: imageView.frame.origin.x,
-                                            y: (FECommon.NavBarHeight + height / 2) - height,
-                                            width: imageView.width,
-                                            height: height)
-                    offset = (FECommon.NavBarHeight + height / 2)
-                }
-                if (isPullUp_1) {
-                    UIView.animate(withDuration: 0.2, animations: {
-                        self.imageView.frame = frame
-                        self.pullUpView?.frame = CGRect.init(x: 0, y: self.imageView.frame.maxY, width: self.frame.width, height: self.frame.height)
-
-                    }) { (b) in
-                        self.pullUpView?.frame = CGRect.init(x: 0, y: 0, width: self.frame.width, height: self.frame.height)
-                        self.pullUpView?.changeContenInsert(insert: offset)
-//                        self.imageContainer.isScrollEnabled = false
-                    }
-                } else {
-                    resetImageView()
-                    self.disMissPullUpView()
-                    isShowDetail = false
-                }
-                if let collectionView = self.superview as? UICollectionView {
-                    collectionView.isScrollEnabled = true
-                }
+                self.endAnimation(isPullUp_1: isPullUp_1)
             default:
                 resetImageView()
             }
+        }
+    }
+    
+    func endAnimation(isPullUp_1 : Bool) {
+        var height = imageView.frame.height
+        var frame = CGRect.zero
+        var offset : CGFloat = 0.0
+        if (imageView.frame.height < self.contentView.height) {
+            frame = CGRect.init(x: imageView.frame.origin.x,
+                                    y: FECommon.NavBarHeight - height / 2,
+                                    width: imageView.width,
+                                    height: height)
+            offset = (FECommon.NavBarHeight + height / 2)
+        } else {
+            height = self.contentView.height
+            frame = CGRect.init(x: imageView.frame.origin.x,
+                                    y: (FECommon.NavBarHeight + height / 2) - height,
+                                    width: imageView.width,
+                                    height: height)
+            offset = (FECommon.NavBarHeight + height / 2)
+        }
+        if (isPullUp_1) {
+            UIView.animate(withDuration: 0.2, animations: {
+                self.imageView.frame = frame
+                self.pullUpView?.frame = CGRect.init(x: 0, y: self.imageView.frame.maxY, width: self.frame.width, height: self.frame.height)
+
+            }) { (b) in
+                self.pullUpView?.frame = CGRect.init(x: 0, y: 0, width: self.frame.width, height: self.frame.height)
+                self.pullUpView?.changeContenInsert(insert: offset)
+                self.imageContainer.pinchGestureRecognizer?.isEnabled = false
+                self.pullUpView?.isShowUp = true
+                self.pullUpView?.changeContentOffsetBlock = { [weak self] offset in
+                    self?.imageView.center.y = (self?.imageView.center.y ?? 0) + offset
+                }
+            }
+        } else {
+            resetImageView()
+            self.disMissPullUpView()
+            isShowDetail = false
+        }
+        if let collectionView = self.superview as? UICollectionView {
+            collectionView.isScrollEnabled = true
         }
     }
     
@@ -315,11 +332,17 @@ extension FEPhotoOverViewCell {
         self.pullUpView?.removeFromSuperview()
         self.pullUpView = nil
         self.pullUpView = FEPhotoOverViewPullUpView.init(frame: CGRect.init(x: 0, y: self.frame.height, width: self.frame.width, height: self.frame.height))
+        self.pullUpView?.cell = self
 //        self.imageContainer.addSubview(self.pullUpView ?? UIView())
         self.imageContainer.insertSubview(self.pullUpView ?? UIView(), belowSubview: self.imageView)
         UIView.animate(withDuration: 0.2) {
             self.pullUpView?.frame = CGRect.init(x: 0, y: self.imageView.frame.maxY, width: self.frame.width, height: self.frame.height)
         }
+    }
+    
+    func pullUpReset() {
+        self.resetImageView()
+        self.disMissPullUpView()
     }
     
     func disMissPullUpView() {
